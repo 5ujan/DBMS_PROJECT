@@ -3,7 +3,7 @@ const db = require("../connectDB");
 // Fetch all skills
 const getAllSkills = async (req, res) => {
   try {
-    const query = "SELECT * FROM SKILLS";
+    const query = "SELECT * FROM SKILL";
     const [skills] = await db.query(query);
     res.json(skills);
   } catch (error) {
@@ -17,9 +17,9 @@ const getSkillsByVolunteerId = async (req, res) => {
   const { id } = req.params;
   try {
     const query = `
-      SELECT s.skill_id, s.skill_name, vs.proficiency_level
-      FROM SKILLS s
-      JOIN VOLUNTEER_SKILLS vs ON s.skill_id = vs.skill_id
+      SELECT s.skill_name, s.skill_name, vs.proficiency_level
+      FROM SKILL s
+      JOIN VOLUNTEER_SKILL vs ON s.skill_name = vs.skill_name
       WHERE vs.volunteer_id = ?`;
     const [skills] = await db.query(query, [id]);
     res.json(skills);
@@ -31,12 +31,12 @@ const getSkillsByVolunteerId = async (req, res) => {
 
 // Add a skill to a volunteer
 const addSkillToVolunteer = async (req, res) => {
-  const { volunteer_id, skill_id, proficiency_level } = req.body;
+  const { volunteer_id, skill_name, proficiency_level } = req.body;
   try {
     const query = `
-      INSERT INTO VOLUNTEER_SKILLS (volunteer_id, skill_id, proficiency_level)
+      INSERT INTO VOLUNTEER_SKILL (volunteer_id, skill_name, proficiency_level)
       VALUES (?, ?, ?)`;
-    await db.query(query, [volunteer_id, skill_id, proficiency_level]);
+    await db.query(query, [volunteer_id, skill_name, proficiency_level]);
     res.status(201).json({ message: "Skill added to volunteer successfully" });
   } catch (error) {
     console.error("Error adding skill to volunteer:", error);
@@ -46,12 +46,12 @@ const addSkillToVolunteer = async (req, res) => {
 
 // Remove a skill from a volunteer
 const removeSkillFromVolunteer = async (req, res) => {
-  const { volunteer_id, skill_id } = req.params;
+  const { volunteer_id, skill_name } = req.params;
   try {
     const query = `
-      DELETE FROM VOLUNTEER_SKILLS
-      WHERE volunteer_id = ? AND skill_id = ?`;
-    await db.query(query, [volunteer_id, skill_id]);
+      DELETE FROM VOLUNTEER_SKILL
+      WHERE volunteer_id = ? AND skill_name = ?`;
+    await db.query(query, [volunteer_id, skill_name]);
     res.json({ message: "Skill removed from volunteer successfully" });
   } catch (error) {
     console.error("Error removing skill from volunteer:", error);

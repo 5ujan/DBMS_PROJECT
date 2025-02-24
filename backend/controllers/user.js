@@ -19,8 +19,8 @@ const updateProfile = async (req, res) => {
   
         // Update skills if provided
         if (skills && skills.length) {
-          await db.query("DELETE FROM VOLUNTEER_SKILLS WHERE volunteer_id = ?", [req.user.id]);
-          const insertSkillsQuery = "INSERT INTO VOLUNTEER_SKILLS (volunteer_id, skill_id) VALUES ?";
+          await db.query("DELETE FROM VOLUNTEER_SKILL WHERE volunteer_id = ?", [req.user.id]);
+          const insertSkillsQuery = "INSERT INTO VOLUNTEER_SKILL (volunteer_id, skill_name) VALUES ?";
           const skillsValues = skills.map(skill => [req.user.id, skill]);
           await db.query(insertSkillsQuery, [skillsValues]);
         }
@@ -72,8 +72,8 @@ const getData = async (req, res) => {
             
             const skillsQuery = `
                 SELECT S.skill_name 
-                FROM SKILLS S
-                JOIN VOLUNTEER_SKILLS VS ON S.skill_id = VS.skill_id
+                FROM SKILL S
+                JOIN VOLUNTEER_SKILL VS ON S.skill_name = VS.skill_name
                 WHERE VS.volunteer_id = ?`;
 
             const [volunteerRows] = await db.query(volunteerQuery, [req.user.id]);

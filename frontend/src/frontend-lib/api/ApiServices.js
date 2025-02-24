@@ -6,7 +6,7 @@ class ApiServices {
             headers: {
                 "Content-Type": "application/json",
             },
-            baseURL:"http:localhost:5555/api"
+            baseURL:"http://localhost:5555/api"
         });
 
         // Add interceptor for auth token
@@ -71,6 +71,7 @@ class ApiServices {
           const formattedPayload = this.formatPayload(payload);
           console.log({formattedPayload})
           const { data, status } = await this.api.post("/user", formattedPayload);
+          console.log({data})
           return { data, status };
         } catch (error) {
           console.error("Error updating user data:", error);

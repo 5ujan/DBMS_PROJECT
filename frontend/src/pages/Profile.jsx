@@ -92,7 +92,7 @@ const ProfilePage = () => {
 			const updatedProfile = await ApiServices.updateUserData(
 				{...user, ...profileData},
 			);
-			setProfileData(updatedProfile);
+			// setProfileData(updatedProfile);
 			setIsEditing(false);
 		} catch (error) {
 			console.error("Error saving changes:", error);
@@ -174,7 +174,7 @@ const ProfilePage = () => {
                                                         className="w-full p-3 border border-gray-300 rounded-md bg-gray-600 text-white"
                                                     />
                                                     ) : (
-                                                    <p className="text-xl">{new Date(value) instanceof Date && value ? value?.split("T")[0] : value}</p>
+                                                    <p className="text-xl">{new Date(value) instanceof Date && value ? (value?.split("T")[0]||"") : value}</p>
                                                     )}
                                                 </div>
                                                 );
