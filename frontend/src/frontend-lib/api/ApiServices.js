@@ -250,7 +250,97 @@ class ApiServices {
             return error.message;
         }
     }
-
+    async adminGetStats() {
+        try {
+            const { data, status } = await this.api.get("/admin/stats");
+            if (status === 200) {
+                return data;
+            }
+            return "Failed to fetch stats";
+        } catch (error) {
+            return error.message;
+        }
+    }
+    async  adminGetAllOrganizations() {
+        try {
+            const { data, status } = await this.api.get("/admin/organization");
+            if (status === 200) {
+                return data;
+            }
+            return "Failed to fetch organizations";
+        } catch (error) {
+            return error.message;
+        }
+    }
+    async  adminGetAllVolunteers() {
+        try {
+            const { data, status } = await this.api.get("/admin/volunteer");
+            if (status === 200) {
+                return data;
+            }
+            return "Failed to fetch volunteers";
+        } catch (error) {
+            return false
+        }
+    }
+    async  adminGetAllEvents() {
+        try {
+            const { data, status } = await this.api.get("/admin/event");
+            if (status === 200) {
+                return data;
+            }
+            return "Failed to fetch events";
+        } catch (error) {
+            return false;
+        }
+    }
+    async  adminDeleteEvent(id) {
+        try {
+            const { status } = await this.api.delete(`/admin/event/${id}`);
+            if (status === 200) {
+                return "Event deleted successfully";
+            }
+            return "Failed to delete event";
+        } catch (error) {
+            return false;
+        }
+    }
+    async  adminDeleteOrganization(id) {
+        try {
+            const { status } = await this.api.delete(`/admin/organization/${id}`);
+            if (status === 200) {
+                return "Organization deleted successfully";
+            }
+            return "Failed to delete organization";
+        } catch (error) {
+            return false;
+        }
+    }
+    async  adminDeleteVolunteer(id) {
+        try {
+            const { status } = await this.api.delete(`/admin/volunteer/${id}`);
+            if (status === 200) {
+                return "Volunteer deleted successfully";
+            }
+            return "Failed to delete volunteer";
+        } catch (error) {
+            return false;
+        }
+    }
+    async updateUserRole(email, promote = true) {
+        try {
+            const { status } = await this.api.post("/admin/update_user_role", {
+                email,
+                promote
+            });
+            if (status === 200) {
+                return "Role updated successfully";
+            }
+            return "Failed to update role";
+        } catch (error) {
+            return false;
+        }
+    }
 
     // Logout method
     logout() {

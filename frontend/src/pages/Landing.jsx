@@ -74,13 +74,13 @@ const Landing = () => {
           <div className="flex space-x-4">
             <button 
               className="px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition-colors"
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/signin')}
             >
               Log In
             </button>
             <button 
               className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
-              onClick={() => navigate('/signup')}
+              onClick={() => navigate('/signin')}
             >
               Sign Up
             </button>

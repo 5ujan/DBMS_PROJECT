@@ -16,6 +16,7 @@ const {event} = require("./routes/event.js");
 const { donor } = require("./routes/donor.js");
 const {skill} = require("./routes/skill.js")
 const {image} = require("./routes/image")
+const {admin} = require("./routes/admin.js")
 
 const app = express();
 app.use(express.json());
@@ -36,7 +37,7 @@ app.use("/api", auth);  // Auth routes (login, register, etc.)
 
 // Apply authentication middleware for user routes
 app.use("/api", authenticate);  // Authenticate before user routes
-app.use("/api", user, event, donor, skill, image);  // User routes (accessible only after authentication)
+app.use("/api", user, event, donor, skill, image, admin);  // User routes (accessible only after authentication)
 
 app.listen(5555, () => {
     console.log("server started on port", 5555);

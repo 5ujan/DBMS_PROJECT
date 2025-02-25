@@ -5,36 +5,8 @@ import axios from 'axios';
 import ApiServices from '../frontend-lib/api/ApiServices';
 
 const Navbar = () => {
-  const token = localStorage.getItem('token');
-  const {user,setUser, setError} = useStore()
-const navigate = useNavigate();
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (!token) {
-        navigate('/signin');
-        return;
-      }
-
-      try {
-        console.log(token)
-        const data = await ApiServices.getUser();
-        console.log({token, user:data})
-        setUser(data);
-        // console.log(response.data)
-      } catch (err) {
-        if (err.response && err.response.status === 401) {
-          localStorage.removeItem('token');
-          navigate('/signin');
-        } else {
-          setError('Error fetching user data');
-          console.error(err);
-        }
-      }
-    };
-
-    fetchUserData();
-  }, [navigate, token]);
-
+  const {user, setUser} = useStore();
+  console.log(user)
 //   const handleLogout = () => {
 //     localStorage.removeItem('token');
 //     localStorage.removeItem('role');
@@ -54,12 +26,14 @@ const navigate = useNavigate();
           Dashboard
         </Link>
         <div>
-          {token ? (
             <div className="flex items-center space-x-4">
               {/* {user?.role === 'organization' && (
             )} */}
                 <Link to="/events" className="text-white">Events</Link>
               <Link to="/profile" className="text-white">Profile</Link>
+              {user?.role === 'admin' && (
+                <Link to="/admin/" className="text-white">Admin</Link>
+              )}  
               <button
                 onClick={handleLogout}
                 className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition duration-200"
@@ -67,9 +41,7 @@ const navigate = useNavigate();
                 Logout
               </button>
             </div>
-          ) : (
-            <Link to="/signin" className="text-white">Login</Link>
-          )}
+          
         </div>
       </div>
     </nav>
