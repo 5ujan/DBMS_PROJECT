@@ -231,7 +231,7 @@ class ApiServices {
         }
     }
 
-    async uploadFileToCloudinary(file) {
+    async uploadPhotoToCloudinary(file) {
         try {
             const formData = new FormData();
             formData.append("photo", file);

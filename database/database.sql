@@ -137,28 +137,27 @@ INSERT INTO `PROGRAMMES` VALUES ('7791f420-fe94-47b7-866f-7db2e4c2f951','fb7c481
 UNLOCK TABLES;
 
 --
--- Table structure for table `SKILLS`
+-- Table structure for table `SKILL`
 --
 
-DROP TABLE IF EXISTS `SKILLS`;
+DROP TABLE IF EXISTS `SKILL`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `SKILLS` (
-  `skill_id` int NOT NULL AUTO_INCREMENT,
+CREATE TABLE `SKILL` (
   `skill_name` varchar(255) NOT NULL,
-  `description` text,
-  PRIMARY KEY (`skill_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `description` text NOT NULL,
+  PRIMARY KEY (`skill_name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `SKILLS`
+-- Dumping data for table `SKILL`
 --
 
-LOCK TABLES `SKILLS` WRITE;
-/*!40000 ALTER TABLE `SKILLS` DISABLE KEYS */;
-INSERT INTO `SKILLS` VALUES (1,'First Aid','Basic medical assistance and emergency care'),(2,'Teaching','Educating children and adults in various subjects'),(3,'Cooking','Preparing meals for shelters, events, and the needy'),(4,'Event Planning','Organizing community service events and fundraisers'),(5,'Community Outreach','Engaging with communities to spread awareness and support'),(6,'Child Care','Taking care of children in shelters and during events'),(7,'Fundraising','Collecting donations and organizing charity campaigns'),(8,'Disaster Response','Helping communities affected by natural disasters'),(9,'Elderly Assistance','Supporting senior citizens with daily activities'),(10,'Public Speaking','Advocating for causes and spreading awareness'),(11,'Mentoring','Guiding and supporting individuals in personal development'),(12,'Environmental Cleanup','Cleaning parks, rivers, and public spaces'),(13,'Animal Welfare','Caring for and rescuing animals in need');
-/*!40000 ALTER TABLE `SKILLS` ENABLE KEYS */;
+LOCK TABLES `SKILL` WRITE;
+/*!40000 ALTER TABLE `SKILL` DISABLE KEYS */;
+INSERT INTO `SKILL` VALUES ('Animal Welfare','Caring for and rescuing animals in need'),('Child Care','Taking care of children in shelters and during events'),('Community Outreach','Engaging with communities to spread awareness and support'),('Cooking','Preparing meals for shelters, events, and the needy'),('Disaster Response','Helping communities affected by natural disasters'),('Elderly Assistance','Supporting senior citizens with daily activities'),('Environmental Cleanup','Cleaning parks, rivers, and public spaces'),('Event Planning','Organizing community service events and fundraisers'),('First Aid','Basic medical assistance and emergency care'),('Fundraising','Collecting donations and organizing charity campaigns'),('Mentoring','Guiding and supporting individuals in personal development'),('Public Speaking','Advocating for causes and spreading awareness'),('Teaching','Educating children and adults in various subjects');
+/*!40000 ALTER TABLE `SKILL` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -189,7 +188,7 @@ CREATE TABLE `VOLUNTEER` (
 
 LOCK TABLES `VOLUNTEER` WRITE;
 /*!40000 ALTER TABLE `VOLUNTEER` DISABLE KEYS */;
-INSERT INTO `VOLUNTEER` VALUES ('365e06e8-74fe-45b8-b604-febf77cf9b3f','nijijiya@gmail.com','$2a$10$MgO0pultRX8Hwd6YeeRVU.Hm5LncNXcdDKdKoyQtyw4gRq4bKPuxi','nijiya','2025-02-23','9898989898','male','2025-02-22 16:59:41',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','sujan.baskota77@gmail.com','$2a$10$K.y.zCynrcQhnyJaaqZf9O8quRigGcSxpz0chomr6PrJIoGbrz6H.','Sujan Baskota','2002-11-27','9840030307','male','2025-01-18 18:15:00',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','thisisnijiya@gmail.com','$2a$10$CxVTc55f3Bu901.tp1hVauAN/bYQE9MVk1jB9PoX3IXAMhPPK38Gu','Nijiya Maharjan','2025-02-17','9898989898','male','2025-02-22 16:51:32',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','vollunteer+test@gmail.com','$2a$10$WFf4lwadqGk/pR8b7moKMOENFF3FMxbH0l2JlQkvMbL5nIgZ4hmCy','Yujal','2025-02-04','1231231234','male','2025-02-22 13:46:18',NULL);
+INSERT INTO `VOLUNTEER` VALUES ('365e06e8-74fe-45b8-b604-febf77cf9b3f','nijijiya@gmail.com','$2a$10$MgO0pultRX8Hwd6YeeRVU.Hm5LncNXcdDKdKoyQtyw4gRq4bKPuxi','nijiya','2025-02-23','9898989898','male','2025-02-22 16:59:41',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','sujan.baskota77@gmail.com','$2a$10$K.y.zCynrcQhnyJaaqZf9O8quRigGcSxpz0chomr6PrJIoGbrz6H.','Sujan Baskota','2002-11-21','9840030307','male','2025-01-12 18:15:00','https://res.cloudinary.com/dqgwwwbfp/image/upload/v1740398273/volunteer_management/zhc0olbnqxxhgqmirpry.jpg'),('a6107216-bf2e-4c14-b4c6-342741323148','thisisnijiya@gmail.com','$2a$10$CxVTc55f3Bu901.tp1hVauAN/bYQE9MVk1jB9PoX3IXAMhPPK38Gu','Nijiya Maharjan','2025-02-17','9898989898','male','2025-02-22 16:51:32',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','vollunteer+test@gmail.com','$2a$10$WFf4lwadqGk/pR8b7moKMOENFF3FMxbH0l2JlQkvMbL5nIgZ4hmCy','Yujal','2025-02-04','1231231234','male','2025-02-22 13:46:18',NULL);
 /*!40000 ALTER TABLE `VOLUNTEER` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -250,31 +249,30 @@ LOCK TABLES `VOLUNTEER_PROGRAMMES` WRITE;
 UNLOCK TABLES;
 
 --
--- Table structure for table `VOLUNTEER_SKILLS`
+-- Table structure for table `VOLUNTEER_SKILL`
 --
 
-DROP TABLE IF EXISTS `VOLUNTEER_SKILLS`;
+DROP TABLE IF EXISTS `VOLUNTEER_SKILL`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `VOLUNTEER_SKILLS` (
-  `volunteer_id` varchar(50) NOT NULL,
-  `skill_id` int NOT NULL,
+CREATE TABLE `VOLUNTEER_SKILL` (
+  `volunteer_id` char(36) NOT NULL,
+  `skill_name` varchar(255) NOT NULL,
   `proficiency_level` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`volunteer_id`,`skill_id`),
-  KEY `skill_id` (`skill_id`),
-  CONSTRAINT `VOLUNTEER_SKILLS_ibfk_1` FOREIGN KEY (`volunteer_id`) REFERENCES `VOLUNTEER` (`volunteer_id`),
-  CONSTRAINT `VOLUNTEER_SKILLS_ibfk_2` FOREIGN KEY (`skill_id`) REFERENCES `SKILLS` (`skill_id`)
+  PRIMARY KEY (`volunteer_id`,`skill_name`),
+  KEY `skill_name` (`skill_name`),
+  CONSTRAINT `VOLUNTEER_SKILL_ibfk_1` FOREIGN KEY (`skill_name`) REFERENCES `SKILL` (`skill_name`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `VOLUNTEER_SKILLS`
+-- Dumping data for table `VOLUNTEER_SKILL`
 --
 
-LOCK TABLES `VOLUNTEER_SKILLS` WRITE;
-/*!40000 ALTER TABLE `VOLUNTEER_SKILLS` DISABLE KEYS */;
-INSERT INTO `VOLUNTEER_SKILLS` VALUES ('365e06e8-74fe-45b8-b604-febf77cf9b3f',1,NULL),('365e06e8-74fe-45b8-b604-febf77cf9b3f',5,NULL),('365e06e8-74fe-45b8-b604-febf77cf9b3f',7,NULL),('365e06e8-74fe-45b8-b604-febf77cf9b3f',8,NULL),('a6107216-bf2e-4c14-b4c6-342741323148',3,NULL),('a6107216-bf2e-4c14-b4c6-342741323148',5,NULL),('a6107216-bf2e-4c14-b4c6-342741323148',6,NULL),('a6107216-bf2e-4c14-b4c6-342741323148',9,NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a',1,NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a',3,NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a',12,NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a',13,NULL);
-/*!40000 ALTER TABLE `VOLUNTEER_SKILLS` ENABLE KEYS */;
+LOCK TABLES `VOLUNTEER_SKILL` WRITE;
+/*!40000 ALTER TABLE `VOLUNTEER_SKILL` DISABLE KEYS */;
+INSERT INTO `VOLUNTEER_SKILL` VALUES ('365e06e8-74fe-45b8-b604-febf77cf9b3f','Community Outreach',NULL),('365e06e8-74fe-45b8-b604-febf77cf9b3f','Disaster Response',NULL),('365e06e8-74fe-45b8-b604-febf77cf9b3f','First Aid',NULL),('365e06e8-74fe-45b8-b604-febf77cf9b3f','Fundraising',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','Community Outreach',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','First Aid',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','Fundraising',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','Child Care',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','Community Outreach',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','Cooking',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','Elderly Assistance',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','Animal Welfare',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','Cooking',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','Environmental Cleanup',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','First Aid',NULL);
+/*!40000 ALTER TABLE `VOLUNTEER_SKILL` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -286,4 +284,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-24  9:37:59
+-- Dump completed on 2025-02-25 17:58:26

@@ -17,6 +17,7 @@ const ProfilePage = () => {
 	const [isEditing, setIsEditing] = useState(false);
 	const [imagePreview, setImagePreview] = useState(null);
 	const [newSkill, setNewSkill] = useState("");
+	const [availableSkills, setAvailableSkills]= useState([])
 	const [loading, setLoading] = useState(true);
 	const {user, setUser} = useStore()
 
@@ -24,6 +25,8 @@ const ProfilePage = () => {
 		const fetchUserProfile = async () => {
 			try {
 				const data = await ApiServices.getUser();
+				const skills = await ApiServices.getAllSkills()
+				setAvailableSkills(skills)
 
 				setProfileData({
 					...data,
@@ -83,7 +86,7 @@ const ProfilePage = () => {
 	
 			// If there's a new profile image, upload it first and get the URL
 			if (profileData.avatar instanceof File) {
-				const imageUrl = await ApiServices.uploadFileToCloudinary(
+				const imageUrl = await ApiServices.uploadPhotoToCloudinary(
 					profileData.avatar
 				);
 				profileData.avatar = imageUrl;
@@ -186,65 +189,60 @@ const ProfilePage = () => {
 
 							{/* Skills Section ( @yujal in case of organization idk what to add so improvise)*/}
 							<section className="bg-gray-800 w-1/3 rounded-xl pr-1 pb-1 text-white">
-								<div className="bg-gray-700 p-8 rounded-xl h-full shadow-xl">
-									<div className="mt-6">
-										<h3 className="text-xl font-semibold text-green-500">
-											Skills
-										</h3>
-										<ul className="flex gap-3 flex-wrap mt-3">
-											{/* Render Skills as Tags */}
-											{profileData?.skills?.map(
-												(skill) => (
-													<li
-														key={skill}
-														className="bg-green-600 px-3 py-1 rounded-full text-white flex items-center"
-													>
-														{isEditing ? (
-															<>
-																{skill}{" "}
-																<button
-																	onClick={() =>
-																		handleRemoveSkill(
-																			skill
-																		)
-																	}
-																	className="ml-2 text-red-500"
-																>
-																	<FiXCircle />
-																</button>
-															</>
-														) : (
-															<p>{skill}</p>
-														)}
-													</li>
-												)
-											)}
-										</ul>
-										{/* Input for Adding Skills */}
-										{isEditing && (
-											<div className="mt-4">
-												<input
-													type="text"
-													value={newSkill}
-													onChange={(e) =>
-														setNewSkill(
-															e.target.value
-														)
-													}
-													className="w-full p-3 border border-gray-300 rounded-md bg-gray-600 text-white"
-													placeholder="Add a skill"
-												/>
-												<button
-													onClick={handleAddSkill}
-													className="mt-2 bg-green-500 text-white py-2 px-4 rounded-md"
-												>
-													Add Skill
-												</button>
-											</div>
-										)}
-									</div>
-								</div>
-							</section>
+      <div className="bg-gray-700 p-8 rounded-xl h-full shadow-xl">
+        <div className="mt-6">
+          <h3 className="text-xl font-semibold text-green-500">Skills</h3>
+          <ul className="flex gap-3 flex-wrap mt-3">
+            {profileData?.skills?.map((skill) => (
+              <li key={skill} className="bg-green-600 px-3 py-1 rounded-full text-white flex items-center">
+                {isEditing ? (
+                  <>
+                    {skill}
+                    <button onClick={() => handleRemoveSkill(skill)} className="ml-2 text-red-500">
+                      <FiXCircle />
+                    </button>
+                  </>
+                ) : (
+                  <p>{skill}</p>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          {/* Dropdown for Adding Skills */}
+          {isEditing && (
+            <div className="mt-4">
+              <select
+                value={newSkill}
+                onChange={(e) => setNewSkill(e.target.value)}
+                className="w-full p-3 border border-gray-300 rounded-md bg-gray-600 text-white"
+              >
+                <option value="">Select a skill</option>
+                {availableSkills
+                  .filter((skill) => !profileData.skills.includes(skill)) // Prevent duplicates
+                  .map((skill) => (
+                    <option key={skill.skill_name} value={skill.skill_name}>
+                      {skill.skill_name}
+                    </option>
+                  ))}
+              </select>
+              <button
+                onClick={() => {
+                  if (newSkill) {
+                    handleAddSkill(newSkill);
+                    setNewSkill(""); // Reset after adding
+                  }
+                }}
+                className="mt-2 bg-green-500 text-white py-2 px-4 rounded-md"
+                disabled={!newSkill}
+              >
+                Add Skill
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
 						</section>
 
 						{/* Edit and Save Buttons */}

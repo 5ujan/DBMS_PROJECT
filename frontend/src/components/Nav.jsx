@@ -2,6 +2,7 @@ import React, {useEffect} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useStore } from '../store/store';
 import axios from 'axios';
+import ApiServices from '../frontend-lib/api/ApiServices';
 
 const Navbar = () => {
   const token = localStorage.getItem('token');
@@ -16,14 +17,10 @@ const navigate = useNavigate();
 
       try {
         console.log(token)
-        const response = await axios.get('/api/user', {
-          headers: {
-            Authorization: `${token}`,
-          },
-        });
-
-        setUser(response.data);
-        console.log(response.data)
+        const data = await ApiServices.getUser();
+        console.log({token, user:data})
+        setUser(data);
+        // console.log(response.data)
       } catch (err) {
         if (err.response && err.response.status === 401) {
           localStorage.removeItem('token');
