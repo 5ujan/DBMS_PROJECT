@@ -25,7 +25,7 @@
 body {
   box-sizing: border-box;
   /* background-color: #000; */
-  font-family: "monospace";
+  font-family: Monospace;
 }
 
 .recharts-legend-item-text {
