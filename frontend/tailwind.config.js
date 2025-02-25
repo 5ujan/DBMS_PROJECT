@@ -11,7 +11,7 @@ export default {
   			]
   		},
   		colors: {
-  			'dark-green': '#02e075'
+  			'dark-green': '#22c55e'
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

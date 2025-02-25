@@ -6,86 +6,200 @@ import { useStore } from '../store/store';
 const Home = () => {
   const navigate = useNavigate();
   const { user } = useStore();
-  const [events, setEvents] = useState([]);
-
-  
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+  const [completedEvents, setCompletedEvents] = useState([]);
 
   useEffect(() => {
-    // Predefined event data
+    // Predefined event data (updated to 2025)
     const realEvents = [
       {
         id: 1,
         title: "Blood Donation Camp",
         description: "A successful blood donation drive that helped save hundreds of lives.",
-        date: "2024-01-15",
+        date: "2025-01-15",
         image: "https://www.nidirect.gov.uk/sites/default/files/images/news/blood-donation.jpg",
       },
       {
         id: 2,
         title: "Community Cleanliness Drive",
         description: "A dedicated effort to clean up local parks and streets, making our environment healthier.",
-        date: "2024-02-10",
+        date: "2025-02-10",
         image: "https://otterwaiver.com/wp-content/uploads/2021/03/young-man-cleaning-the-beach-VTN7W6U-scaled.jpg",
       },
       {
         id: 3,
         title: "Tree Plantation Program",
         description: "Planting trees to contribute to a greener future and combat climate change.",
-        date: "2024-03-20",
+        date: "2025-03-20",
         image: "https://cdn.downtoearth.org.in/library/large/2022-09-15/0.08976900_1663241450_istock-1248915720-(1).jpg",
       },
       {
         id: 4,
         title: "Food Distribution Drive",
         description: "Providing meals to underprivileged families in our community.",
-        date: "2024-04-05",
+        date: "2025-04-05",
         image: "https://imgnew.outlookindia.com/public/uploads/articles/2021/2/13/Food-distribution_20200825.jpg",
       },
       {
         id: 5,
         title: "Educational Workshop",
         description: "A program to support education and skill development for young learners.",
-        date: "2024-05-12",
+        date: "2025-05-12",
         image: "https://www.worcester.ac.uk/images/text-area-images/mpc-workshops2.JPG?width=880",
       },
       {
         id: 6,
         title: "Health Awareness Campaign",
         description: "Promoting health and wellness through free check-ups and awareness sessions.",
-        date: "2024-06-25",
+        date: "2025-06-25",
         image: "https://ekarmachari.com/wp-content/uploads/2021/05/242303958fchv.jpeg",
       }
     ];
-    setEvents(realEvents);
+    
+    // Get current date (start of day)
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    // Filter and sort upcoming events (limit to 3)
+    const upcoming = realEvents
+      .filter(event => {
+        const eventDate = new Date(event.date);
+        return eventDate >= today;
+      })
+      .sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateA - dateB;
+      })
+      .slice(0, 3);
+    
+    // Filter and sort completed events (most recent first, limit to 3)
+    const completed = realEvents
+      .filter(event => {
+        const eventDate = new Date(event.date);
+        return eventDate < today;
+      })
+      .sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateB - dateA; // Reverse order for completed events
+      })
+      .slice(0, 3);
+    
+    setUpcomingEvents(upcoming);
+    setCompletedEvents(completed);
   }, []);
+
+  // Function to determine event status
+  const getEventStatus = (eventDate) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const date = new Date(eventDate);
+    
+    // Calculate difference in days
+    const diffTime = date - today;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffTime < 0) {
+      return { status: "Completed", color: "bg-gray-600", textColor: "text-white" };
+    } else if (diffDays === 0) {
+      return { status: "Today", color: "bg-red-600", textColor: "text-white" };
+    } else if (diffDays <= 7) {
+      return { status: "This Week", color: "bg-orange-500", textColor: "text-white" };
+    } else if (diffDays <= 30) {
+      return { status: "This Month", color: "bg-blue-500", textColor: "text-white" };
+    } else {
+      return { status: "Upcoming", color: "bg-green-600", textColor: "text-white" };
+    }
+  };
+
+  // Format date to be more readable
+  const formatDate = (dateString) => {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  // Reusable event card component
+  const EventCard = ({ event, isCompleted = false }) => {
+    const { status, color, textColor } = getEventStatus(event.date);
+    
+    return (
+      <div className="w-full sm:w-1/2 lg:w-1/3 px-3 mb-6">
+        <div className={`bg-gray-900 rounded-lg overflow-hidden shadow-lg h-full transition-transform duration-300 hover:transform hover:scale-105 ${isCompleted ? 'opacity-90' : ''}`}>
+          <div className="relative h-48">
+            <img 
+              src={event.image} 
+              alt={event.title} 
+              className={`w-full h-full object-cover ${isCompleted ? 'grayscale' : ''}`}
+            />
+            <div className={`absolute top-0 right-0 ${color} ${textColor} px-3 py-1 m-2 rounded-full text-sm font-semibold`}>
+              {status}
+            </div>
+          </div>
+          <div className="p-5 flex flex-col h-56">
+            <div className="mb-2">
+              <h4 className="text-xl font-bold truncate">{event.title}</h4>
+            </div>
+            <p className="text-gray-400 text-sm mb-3">{formatDate(event.date)}</p>
+            <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">{event.description}</p>
+            <button 
+              className={`w-full font-medium py-2 px-4 rounded-md transition-colors duration-300 mt-auto ${isCompleted ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+              onClick={() => navigate(`/event/${event.id}`)}
+            >
+              {isCompleted ? 'View Recap' : 'View Details'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="bg-black text-white w-full min-h-screen">
       <Navbar />
       <div className="p-6">
-        
         <h2 className="text-5xl font-medium text-center mt-4 text-gray-300">
           "Together, we can make a difference."
         </h2>
 
-        <h3 className="text-3xl font-semibold text-center mt-6 text-white">
-          Our Successful Events
-        </h3>
-
-        {/* Event Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
-          {events.map((event) => (
-            <div key={event.id} className="bg-gray-800 p-4 rounded-lg shadow-lg">
-              <img
-                src={event.image}
-                alt={event.title}
-                className="w-full h-48 object-cover rounded-md"
-              />
-              <h3 className="text-xl font-semibold mt-3">{event.title}</h3>
-              <p className="text-gray-400 text-sm mt-1">{event.date}</p>
-              <p className="text-gray-300 mt-2">{event.description}</p>
+        {/* Upcoming Events Section */}
+        <div className="max-w-6xl mx-auto mt-12 mb-10">
+          <h3 className="text-3xl font-semibold text-white mb-6">
+            Upcoming Events
+          </h3>
+          
+          {upcomingEvents.length > 0 ? (
+            <div className="flex flex-wrap -mx-3">
+              {upcomingEvents.map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
             </div>
-          ))}
+          ) : (
+            <div className="py-8">
+              <p className="text-xl text-gray-400">No upcoming events at the moment.</p>
+              <p className="text-gray-500 mt-2">Check back soon!</p>
+            </div>
+          )}
+        </div>
+        
+        {/* Completed Events Section */}
+        <div className="max-w-6xl mx-auto mt-16">
+          <h3 className="text-3xl font-semibold text-white mb-6">
+            Completed Events
+          </h3>
+          
+          {completedEvents.length > 0 ? (
+            <div className="flex flex-wrap -mx-3">
+              {completedEvents.map((event) => (
+                <EventCard key={event.id} event={event} isCompleted={true} />
+              ))}
+            </div>
+          ) : (
+            <div className="py-8">
+              <p className="text-xl text-gray-400">No completed events yet.</p>
+            </div>
+          )}
+          
         </div>
       </div>
     </div>

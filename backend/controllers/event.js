@@ -6,15 +6,17 @@ exports.getAllEvents = async (req, res) => {
     try {
         const [events] = await db.query(`
             SELECT 
-                p.programme_id, p.programme_name, p.description, p.start_date, p.end_date,
+                p.programme_id, p.programme_name, p.description, p.start_date, p.end_date,p.image,
                 o.organization_id, o.organization_name, o.contact_email, o.contact_phone
             FROM PROGRAMMES p
             NATURAL JOIN ORGANIZATION o
         `);
+        console.log(events)
         res.json(events);
     } catch (error) {
         res.status(500).json({ message: "Error fetching events", error });
     }
+
 };
 
 // Get event by ID with organization details
@@ -63,16 +65,16 @@ exports.createEvent = async (req, res) => {
         return res.status(403).json({ message: "Access denied" });
     }
 
-    const { programme_name, description, start_date, end_date } = req.body;
+    const { programme_name, description, start_date, end_date, image } = req.body;
     console.log(req.body)
     const programme_id = uuidv4();
     const organization_id = req.user.id;
 
     try {
         const [newEvent] = await db.query(`
-            INSERT INTO PROGRAMMES (programme_id, organization_id, programme_name, description, start_date, end_date) 
-            VALUES (?, ?, ?, ?, ?, ?)`, 
-            [programme_id, organization_id, programme_name, description, start_date, end_date]);
+            INSERT INTO PROGRAMMES (programme_id, organization_id, programme_name, description, start_date, end_date, image) 
+            VALUES (?, ?, ?, ?, ?, ?,?)`, 
+            [programme_id, organization_id, programme_name, description, start_date, end_date, image]);
 
         res.status(201).json({ message: "Event created successfully", event: newEvent });
     } catch (error) {
@@ -116,7 +118,7 @@ exports.updateEvent = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { programme_name, description, start_date, end_date } = req.body;
+    const { programme_name, description, start_date, end_date, image} = req.body;
     const organization_id = req.user.id;
 
     try {
@@ -132,9 +134,9 @@ exports.updateEvent = async (req, res) => {
         // Update the event
         const [updatedEvent] = await db.query(`
             UPDATE PROGRAMMES
-            SET programme_name = ?, description = ?, start_date = ?, end_date = ?
+            SET programme_name = ?, description = ?, start_date = ?, end_date = ?, image = ?
             WHERE programme_id = ?`, 
-            [programme_name, description, start_date, end_date, id]);
+            [programme_name, description, start_date, end_date, image, id]);
 
         res.json({ message: "Event updated successfully", event: updatedEvent });
     } catch (error) {
