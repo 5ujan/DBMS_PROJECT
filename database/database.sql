@@ -16,6 +16,28 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `ADMIN`
+--
+
+DROP TABLE IF EXISTS `ADMIN`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ADMIN` (
+  `email` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ADMIN`
+--
+
+LOCK TABLES `ADMIN` WRITE;
+/*!40000 ALTER TABLE `ADMIN` DISABLE KEYS */;
+INSERT INTO `ADMIN` VALUES (NULL),(NULL),('org+test@gmail.com'),('vollunteer+test@gmail.com'),('nijijiya@gmail.com');
+/*!40000 ALTER TABLE `ADMIN` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `DONATIONS`
 --
 
@@ -101,7 +123,7 @@ CREATE TABLE `ORGANIZATION` (
 
 LOCK TABLES `ORGANIZATION` WRITE;
 /*!40000 ALTER TABLE `ORGANIZATION` DISABLE KEYS */;
-INSERT INTO `ORGANIZATION` VALUES ('0b8e0530-bdb9-4c37-b33d-fd2cf9da1bd7','sujan.baskota77@gmail.com','$2a$10$87Q/8yux.xo9SfZWeMh4De9Y5EgV7js94yM6AXYBLZffQXRaHuVoe','MY OWN ORG','2025-01-02','sujan.baskota77@gmail.com','9840030307','2025-01-19 16:03:29',NULL),('13c7d68a-fbe6-4980-aed2-161e6afdb5db','org+test@gmail.com','$2a$10$5sT/upfuPCnpoRjHpvKD/.RaeQQxhzvxjQe/C.tJq9jCWypoUmpTS','Sahayogi','2025-02-03','org_email@gmail.com','9840030307','2025-02-22 13:48:27',NULL),('1f5bbf53-3d38-4264-bc76-dd9b0fe21f79','org+test2@gmail.com','$2a$10$nNBK2DiNrSnUB8dE5cQbjezKs1oRGbu6TmpEira11uYRTal0iCcky','Sahayogi','2025-02-03','org_email@gmail.com','9840030307','2025-02-22 13:49:01',NULL),('24963c0e-2d09-4360-8ac7-88370bedd770','org+test3@gmail.com','$2a$10$OZfoMeIjfEbWr0vkwbUVV.AjIad0iG8SZZp.DQaFkW14/IABK76mu','Sahayogi','2025-02-03','org_email@gmail.com','9840030307','2025-02-22 13:50:11',NULL),('4f28b73b-20e8-4c86-bb4a-cb5e78f19496','sujan.org@gmail.com','$2a$10$YO7Lc6Qqx2iMKWVqTyIVY.3izHRdCCyzePGus/ZnvaN8eUCTz6JOG','Sujan Org','2024-12-31','sujan.org@gmail.com','9840030307','2025-01-19 16:41:16',NULL),('fb7c481c-4215-432e-b6d7-2ba8efabaa1a','org+test4@gmail.com','$2a$10$9XXGjEenpzcTxo72cc8uZeDn2x2ao8JczX21NO0HiZems70ql79pe','Sahayogi Batman','2025-02-01','org+test4@gmail.com','9840030307','2025-02-22 13:50:36','https://res.cloudinary.com/dqgwwwbfp/image/upload/v1740366703/volunteer_management/yr6xxzuolqpeo1fcmgm0.jpg');
+INSERT INTO `ORGANIZATION` VALUES ('0b8e0530-bdb9-4c37-b33d-fd2cf9da1bd7','sujan.baskota77@gmail.com','$2a$10$87Q/8yux.xo9SfZWeMh4De9Y5EgV7js94yM6AXYBLZffQXRaHuVoe','MY OWN ORG','2025-01-02','sujan.baskota77@gmail.com','9840030307','2025-01-19 16:03:29',NULL),('13c7d68a-fbe6-4980-aed2-161e6afdb5db','org+test@gmail.com','$2a$10$5sT/upfuPCnpoRjHpvKD/.RaeQQxhzvxjQe/C.tJq9jCWypoUmpTS','Sahayogi','2025-02-03','org_email@gmail.com','9840030307','2025-02-22 13:48:27',NULL),('1f5bbf53-3d38-4264-bc76-dd9b0fe21f79','org+test2@gmail.com','$2a$10$nNBK2DiNrSnUB8dE5cQbjezKs1oRGbu6TmpEira11uYRTal0iCcky','Sahayogi','2025-02-03','org_email@gmail.com','9840030307','2025-02-22 13:49:01',NULL),('24963c0e-2d09-4360-8ac7-88370bedd770','org+test3@gmail.com','$2a$10$OZfoMeIjfEbWr0vkwbUVV.AjIad0iG8SZZp.DQaFkW14/IABK76mu','Sahayogi','2025-02-03','org_email@gmail.com','9840030307','2025-02-22 13:50:11',NULL),('4f28b73b-20e8-4c86-bb4a-cb5e78f19496','sujan.org@gmail.com','$2a$10$YO7Lc6Qqx2iMKWVqTyIVY.3izHRdCCyzePGus/ZnvaN8eUCTz6JOG','Sujan Org','2024-12-31','sujan.org@gmail.com','9840030307','2025-01-19 16:41:16',NULL),('d833a5ca-25fb-4b42-b143-c9155afba3b7','sujan.org2@gmail.com','$2a$10$KIjjFfkXbwHRUzcpE5qmQ.VDd.eRGv8d2OVbsmO4dP2irAyKFDMae','Sujan Org','2025-01-28','sujan.org2@gmail.com','9840030307','2025-02-25 12:18:13',NULL),('fb7c481c-4215-432e-b6d7-2ba8efabaa1a','org+test4@gmail.com','$2a$10$9XXGjEenpzcTxo72cc8uZeDn2x2ao8JczX21NO0HiZems70ql79pe','Sahayogi Batman','2025-02-01','org+test4@gmail.com','9840030307','2025-02-22 13:50:36','https://res.cloudinary.com/dqgwwwbfp/image/upload/v1740366703/volunteer_management/yr6xxzuolqpeo1fcmgm0.jpg');
 /*!40000 ALTER TABLE `ORGANIZATION` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -188,7 +210,7 @@ CREATE TABLE `VOLUNTEER` (
 
 LOCK TABLES `VOLUNTEER` WRITE;
 /*!40000 ALTER TABLE `VOLUNTEER` DISABLE KEYS */;
-INSERT INTO `VOLUNTEER` VALUES ('365e06e8-74fe-45b8-b604-febf77cf9b3f','nijijiya@gmail.com','$2a$10$MgO0pultRX8Hwd6YeeRVU.Hm5LncNXcdDKdKoyQtyw4gRq4bKPuxi','nijiya','2025-02-23','9898989898','male','2025-02-22 16:59:41',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','sujan.baskota77@gmail.com','$2a$10$K.y.zCynrcQhnyJaaqZf9O8quRigGcSxpz0chomr6PrJIoGbrz6H.','Sujan Baskota','2002-11-21','9840030307','male','2025-01-12 18:15:00','https://res.cloudinary.com/dqgwwwbfp/image/upload/v1740398273/volunteer_management/zhc0olbnqxxhgqmirpry.jpg'),('a6107216-bf2e-4c14-b4c6-342741323148','thisisnijiya@gmail.com','$2a$10$CxVTc55f3Bu901.tp1hVauAN/bYQE9MVk1jB9PoX3IXAMhPPK38Gu','Nijiya Maharjan','2025-02-17','9898989898','male','2025-02-22 16:51:32',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','vollunteer+test@gmail.com','$2a$10$WFf4lwadqGk/pR8b7moKMOENFF3FMxbH0l2JlQkvMbL5nIgZ4hmCy','Yujal','2025-02-04','1231231234','male','2025-02-22 13:46:18',NULL);
+INSERT INTO `VOLUNTEER` VALUES ('365e06e8-74fe-45b8-b604-febf77cf9b3f','nijijiya@gmail.com','$2a$10$MgO0pultRX8Hwd6YeeRVU.Hm5LncNXcdDKdKoyQtyw4gRq4bKPuxi','nijiya','2025-02-23','9898989898','male','2025-02-22 16:59:41',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','sujan.baskota77@gmail.com','$2a$10$K.y.zCynrcQhnyJaaqZf9O8quRigGcSxpz0chomr6PrJIoGbrz6H.','Sujan Baskota','2002-11-18','9840030307','male','2025-01-09 18:15:00','https://res.cloudinary.com/dqgwwwbfp/image/upload/v1740398273/volunteer_management/zhc0olbnqxxhgqmirpry.jpg'),('a6107216-bf2e-4c14-b4c6-342741323148','thisisnijiya@gmail.com','$2a$10$CxVTc55f3Bu901.tp1hVauAN/bYQE9MVk1jB9PoX3IXAMhPPK38Gu','Nijiya Maharjan','2025-02-17','9898989898','male','2025-02-22 16:51:32',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','vollunteer+test@gmail.com','$2a$10$WFf4lwadqGk/pR8b7moKMOENFF3FMxbH0l2JlQkvMbL5nIgZ4hmCy','Yujal','2025-02-04','1231231234','male','2025-02-22 13:46:18',NULL);
 /*!40000 ALTER TABLE `VOLUNTEER` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -271,7 +293,7 @@ CREATE TABLE `VOLUNTEER_SKILL` (
 
 LOCK TABLES `VOLUNTEER_SKILL` WRITE;
 /*!40000 ALTER TABLE `VOLUNTEER_SKILL` DISABLE KEYS */;
-INSERT INTO `VOLUNTEER_SKILL` VALUES ('365e06e8-74fe-45b8-b604-febf77cf9b3f','Community Outreach',NULL),('365e06e8-74fe-45b8-b604-febf77cf9b3f','Disaster Response',NULL),('365e06e8-74fe-45b8-b604-febf77cf9b3f','First Aid',NULL),('365e06e8-74fe-45b8-b604-febf77cf9b3f','Fundraising',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','Community Outreach',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','First Aid',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','Fundraising',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','Child Care',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','Community Outreach',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','Cooking',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','Elderly Assistance',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','Animal Welfare',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','Cooking',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','Environmental Cleanup',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','First Aid',NULL);
+INSERT INTO `VOLUNTEER_SKILL` VALUES ('365e06e8-74fe-45b8-b604-febf77cf9b3f','Community Outreach',NULL),('365e06e8-74fe-45b8-b604-febf77cf9b3f','Disaster Response',NULL),('365e06e8-74fe-45b8-b604-febf77cf9b3f','First Aid',NULL),('365e06e8-74fe-45b8-b604-febf77cf9b3f','Fundraising',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','Community Outreach',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','Cooking',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','First Aid',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','Fundraising',NULL),('9fa4355d-cb8a-4f8b-9a7f-af0622d466b3','Public Speaking',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','Child Care',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','Community Outreach',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','Cooking',NULL),('a6107216-bf2e-4c14-b4c6-342741323148','Elderly Assistance',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','Animal Welfare',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','Cooking',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','Environmental Cleanup',NULL),('fa919eaa-dab8-43e8-a570-2bccb4df285a','First Aid',NULL);
 /*!40000 ALTER TABLE `VOLUNTEER_SKILL` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -284,4 +306,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-25 17:58:26
+-- Dump completed on 2025-02-26  2:08:00
