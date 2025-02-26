@@ -22,7 +22,7 @@ const Events = () => {
     const fetchEvents = async () => {
       try {
         const response = await ApiServices.getAllEvents(); // Use the ApiServices method
-        console.log(response)
+        // console.log(response)
         setEvents(response);
         setFilteredEvents(response);
       } catch (error) {
@@ -192,9 +192,14 @@ const EventModal = ({ event, onClose, user, navigate, onEdit }) => {
           <p><strong>End Date:</strong> {event?.end_date?.split("T")[0]}</p>
           <p><strong>Description:</strong> {event?.description}</p>
           {user?.role !== 'organization' && (
+            <div className='flex flow-row gap-4'>
             <button className="bg-teal-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-teal-600" onClick={handleRegister}>
               Register for Event
             </button>
+            <button onClick={()=> navigate("/organization/"+event.organization_id)} className="bg-teal-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-teal-600">
+              View Organization Page
+            </button>
+            </div>
           )}
           {user?.role === 'organization' && event?.organization_name === user?.name && (
             <button 

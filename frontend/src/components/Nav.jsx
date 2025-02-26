@@ -6,7 +6,7 @@ import ApiServices from '../frontend-lib/api/ApiServices';
 
 const Navbar = () => {
   const {user, setUser} = useStore();
-  console.log(user)
+  // console.log(user)
 //   const handleLogout = () => {
 //     localStorage.removeItem('token');
 //     localStorage.removeItem('role');

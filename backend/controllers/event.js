@@ -42,6 +42,19 @@ exports.getEventById = async (req, res) => {
     }
 };
 
+exports.getEventsByOrganization = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [events] = await db.query(`
+            SELECT * FROM PROGRAMMES WHERE organization_id = ?
+        `, [id]);
+
+        res.json(events);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching events", error });
+    }
+}
+
 // Get volunteers registered for an event
 exports.getEventVolunteers = async (req, res) => {
     const { id } = req.params;

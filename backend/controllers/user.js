@@ -135,7 +135,7 @@ const getData = async (req, res) => {
 		// Handle organization data
 		if (req.user.role === "organization") {
 			const query = `
-                SELECT organization_id AS id, organization_name AS name, email, established_date, avatar, contact_phone AS phone, created_at
+                SELECT organization_id AS id, organization_name AS name, email,contact_email, established_date, avatar, contact_phone AS phone, created_at
                 FROM ORGANIZATION 
                 WHERE organization_id = ?`;
 
@@ -203,14 +203,27 @@ const getData = async (req, res) => {
 };
 
 const getMyEvents = async (req, res)=>{
+	if(req.user.role !== "organization"){
 	try {
 		const [events] = await db.query(`
-			SELECT * from PROGRAMMES join VOLUNTEER_PROGRAMMES on PROGRAMMES.programme_id = VOLUNTEER_PROGRAMMES.programme_id where volunteer_id = ?;
+			SELECT * from PROGRAMMES natural join ORGANIZATION join VOLUNTEER_PROGRAMMES on PROGRAMMES.programme_id = VOLUNTEER_PROGRAMMES.programme_id where volunteer_id = ?;
 		`, [req.user.id]);
 		res.json(events);
 	}
 	catch (error) {
 		res.status(500).json({ message: "Error fetching events", error });
+	}
+	}
+	else{
+		try {
+			const [events] = await db.query(`
+				SELECT * from PROGRAMMES natural join ORGANIZATION where organization_id = ?;
+			`, [req.user.id]);
+			res.json(events);
+		}
+		catch (error) {
+			res.status(500).json({ message: "Error fetching events", error });
+		}
 	}
 }
 

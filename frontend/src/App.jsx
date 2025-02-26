@@ -12,6 +12,7 @@ import AdminEvents from "./pages/Admin/Events";
 import AdminOrganizations from "./pages/Admin/Organizations";
 import AdminDashboard from "./pages/Admin/Dashboard";
 import ApiServices from "./frontend-lib/api/ApiServices";
+import Organization from "./pages/Organization";
 import { ToastContainer } from "react-toastify";
 import { useStore } from "./store/store";
 
@@ -25,13 +26,14 @@ function ProtectedRoute({ element, adminOnly = false }) {
         try {
           const userData = await ApiServices.getUser();
           setUser(userData);
+          localStorage.setItem("user", JSON.stringify(userData));
         } catch (error) {
           console.error("Authentication failed", error);
         }
       }
     };
     fetchUser();
-  }, [token]);
+  }, []);
 
   if (!token) return <Navigate to="/signin" replace />;
   if (adminOnly && user?.role !== "admin") return <Navigate to="/" replace />;
@@ -52,6 +54,7 @@ function App() {
           <Route path="/dashboard" element={<ProtectedRoute element={<Home />} />} />
           <Route path="/events" element={<ProtectedRoute element={<Events />} />} />
           <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+          <Route path="/organization/:id" element={<ProtectedRoute element={<Organization />} />} />
 
           {/* Protected Admin Routes (Only admins) */}
           <Route path="/admin" element={<ProtectedRoute element={<AdminDashboard />} adminOnly />} />

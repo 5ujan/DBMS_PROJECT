@@ -53,13 +53,13 @@ class ApiServices {
     }
 
     async getUser() {
-        console.log("getusercalled")
+        // console.log("getusercalled")
         try {
             let token = localStorage.getItem("token")
             if(token){
 
                 const { data, status } = await this.api.get("/user");
-                console.log({data})
+                // console.log({data})
                 if (status === 200) {
                     return data;
                 }
@@ -202,6 +202,18 @@ class ApiServices {
         }
     }
 
+    async getEventsByOrganization(id) {
+        try {
+            const { data, status } = await this.api.get(`/event/organization/${id}`);
+            if (status === 200) {
+                return data;
+            }
+            return "Failed to fetch events for this organization";
+        } catch (error) {
+            return error.message;
+        }
+    }
+
     async getAllSkills() {
         try {
             const { data, status } = await this.api.get("/skills");
@@ -269,6 +281,20 @@ class ApiServices {
             return error.message;
         }
     }
+
+    async getOrganizationById(id) {
+        try {
+            console.log("api:"+id)
+            const { data, status } = await this.api.get("/organization/"+id);
+            if (status === 200) {
+                return data;
+            }
+            return "Failed to fetch organization";
+        } catch (error) {
+            return error.message;
+        }
+    }
+
     async adminGetStats() {
         try {
             const { data, status } = await this.api.get("/admin/stats");

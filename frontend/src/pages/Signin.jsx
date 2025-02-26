@@ -76,16 +76,16 @@ export default function Signin() {
 	};
 
 	return (
-		<div className="flex h-screen bg-black w-screen">
+		<div className="flex h-screen bg-[#121212] w-screen">
 			{/* Sidebar */}
-			<div className="w-1/4 bg-dark-green flex flex-col justify-center items-center p-8">
-				<h1 className="absolute top-10 bg-dark-green text-4xl text-black font-bold justify-self-start">
+			<div className="w-1/4  flex flex-col justify-center items-center p-8">
+				<h1 className="absolute top-10 text-4xl text-dark-green font-bold justify-self-start">
 					Sahayog
 				</h1>
-				<h1 className="text-3xl text-black bg-dark-green font-bold justify-self-center">
+				<h1 className="text-3xl  text-white font-bold justify-self-center">
 					Welcome
 				</h1>
-				<p className="text-black bg-dark-green mt-4 text-center">
+				<p className="text-white  mt-4 text-center">
 					{isLogin
 						? "Sign in to access your account."
 						: "Create an account to get started."}
@@ -94,8 +94,8 @@ export default function Signin() {
 
 			{/* Main Content */}
 			<div className="w-3/4 flex justify-center items-center">
-				<div className="bg-black p-10 rounded-xl shadow-xl w-full max-w-md border border-dark-green">
-					<h1 className="text-3xl text-center mb-6 font-semibold text-dark-green">
+				<div className="bg-[#232323] p-10 rounded-xl shadow-xl w-full max-w-md border border-l-dark-green border-t-dark-green">
+					<h1 className="text-3xl text-center mb-6 font-semibold text-white">
 						{isLogin ? "Login" : "Register"}
 					</h1>
 
@@ -106,11 +106,11 @@ export default function Signin() {
 					<form onSubmit={handleSubmit} className="space-y-4">
 						{!isLogin && (
 							<div className="flex items-center justify-between">
-								<span className="text-sm text-dark-green font-medium">
+								<span className="text-sm text-white font-medium">
 									Register as:
 								</span>
 								<div
-									className={`w-24 h-8 flex items-center bg-dark-green rounded-full p-1 cursor-pointer ${
+									className={`w-24 h-8 flex items-center bg-white rounded-full p-1 cursor-pointer ${
 										formData.role === "organization"
 											? "justify-end"
 											: "justify-start"
@@ -125,7 +125,7 @@ export default function Signin() {
 										}))
 									}
 								>
-									<div className="w-10 h-6 bg-black rounded-full flex items-center justify-center text-xs text-dark-green font-semibold">
+									<div className="w-10 h-6 bg-[#232323] rounded-full flex items-center justify-center text-xs text-white font-semibold">
 										{formData.role === "individual"
 											? "Ind"
 											: "Org"}
@@ -138,7 +138,7 @@ export default function Signin() {
 						<div>
 							<label
 								htmlFor="email"
-								className="block text-sm text-dark-green font-medium"
+								className="block text-sm text-white font-medium"
 							>
 								Email
 							</label>
@@ -149,14 +149,14 @@ export default function Signin() {
 								value={formData.email}
 								onChange={handleInputChange}
 								required
-								className="w-full p-2 border border-dark-green rounded-md bg-black text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
+								className="w-full p-2 border border-white rounded-md bg-[#232323] text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
 							/>
 						</div>
 
 						<div>
 							<label
 								htmlFor="password"
-								className="block text-sm text-dark-green font-medium"
+								className="block text-sm text-white font-medium"
 							>
 								Password
 							</label>
@@ -167,7 +167,7 @@ export default function Signin() {
 								value={formData.password}
 								onChange={handleInputChange}
 								required
-								className="w-full p-2 border border-dark-green rounded-md bg-black text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
+								className="w-full p-2 border border-white rounded-md bg-[#232323] text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
 							/>
 						</div>
 
@@ -179,7 +179,7 @@ export default function Signin() {
 										<div>
 											<label
 												htmlFor="name"
-												className="block text-sm text-dark-green font-medium"
+												className="block text-sm text-white font-medium"
 											>
 												Full Name
 											</label>
@@ -190,13 +190,13 @@ export default function Signin() {
 												value={formData.name}
 												onChange={handleInputChange}
 												required
-												className="w-full p-2 border border-dark-green rounded-md bg-black text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
+												className="w-full p-2 border border-white rounded-md bg-[#232323] text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
 											/>
 										</div>
 										<div>
 											<label
 												htmlFor="dob"
-												className="block text-sm text-dark-green font-medium"
+												className="block text-sm text-white font-medium"
 											>
 												Date of Birth
 											</label>
@@ -207,13 +207,13 @@ export default function Signin() {
 												value={formData.dob}
 												onChange={handleInputChange}
 												required
-												className="w-full p-2 border border-dark-green rounded-md bg-black text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
+												className="w-full p-2 border border-white rounded-md bg-[#232323] text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
 											/>
 										</div>
 										<div>
 											<label
 												htmlFor="phone"
-												className="block text-sm text-dark-green font-medium"
+												className="block text-sm text-white font-medium"
 											>
 												Phone Number
 											</label>
@@ -224,15 +224,15 @@ export default function Signin() {
 												value={formData.phone}
 												onChange={handleInputChange}
 												required
-												className="w-full p-2 border border-dark-green rounded-md bg-black text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
+												className="w-full p-2 border border-white rounded-md bg-[#232323] text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
 											/>
 										</div>
 										<div className="col-span-2 flex items-center justify-between">
-											<span className="text-sm text-dark-green font-medium">
+											<span className="text-sm text-white font-medium">
 												Gender:
 											</span>
 											<div
-												className={`w-32 h-8 flex items-center bg-dark-green rounded-full p-1 cursor-pointer ${
+												className={`w-32 h-8 flex items-center bg-white rounded-full p-1 cursor-pointer ${
 													formData.gender === "female"
 														? "justify-end"
 														: "justify-start"
@@ -248,7 +248,7 @@ export default function Signin() {
 													}))
 												}
 											>
-												<div className="w-12 h-6 bg-black rounded-full flex items-center justify-center text-xs text-dark-green font-semibold">
+												<div className="w-12 h-6 bg-[#232323] rounded-full flex items-center justify-center text-xs text-white font-semibold">
 													{formData.gender === "male"
 														? "Male"
 														: "Female"}
@@ -264,7 +264,7 @@ export default function Signin() {
 										<div>
 											<label
 												htmlFor="organizationName"
-												className="block text-sm text-dark-green font-medium"
+												className="block text-sm text-white font-medium"
 											>
 												Organization Name
 											</label>
@@ -277,13 +277,13 @@ export default function Signin() {
 												}
 												onChange={handleInputChange}
 												required
-												className="w-full p-2 border border-dark-green rounded-md bg-black text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
+												className="w-full p-2 border border-white rounded-md bg-[#232323] text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
 											/>
 										</div>
 										<div>
 											<label
 												htmlFor="establishedDate"
-												className="block text-sm text-dark-green font-medium"
+												className="block text-sm text-white font-medium"
 											>
 												Established Date
 											</label>
@@ -294,13 +294,13 @@ export default function Signin() {
 												value={formData.establishedDate}
 												onChange={handleInputChange}
 												required
-												className="w-full p-2 border border-dark-green rounded-md bg-black text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
+												className="w-full p-2 border border-white rounded-md bg-[#232323] text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
 											/>
 										</div>
 										<div>
 											<label
 												htmlFor="contactEmail"
-												className="block text-sm text-dark-green font-medium"
+												className="block text-sm text-white font-medium"
 											>
 												Contact Email
 											</label>
@@ -311,13 +311,13 @@ export default function Signin() {
 												value={formData.contactEmail}
 												onChange={handleInputChange}
 												required
-												className="w-full p-2 border border-dark-green rounded-md bg-black text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
+												className="w-full p-2 border border-white rounded-md bg-[#232323] text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
 											/>
 										</div>
 										<div>
 											<label
 												htmlFor="contactPhone"
-												className="block text-sm text-dark-green font-medium"
+												className="block text-sm text-white font-medium"
 											>
 												Contact Phone
 											</label>
@@ -328,7 +328,7 @@ export default function Signin() {
 												value={formData.contactPhone}
 												onChange={handleInputChange}
 												required
-												className="w-full p-2 border border-dark-green rounded-md bg-black text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
+												className="w-full p-2 border border-white rounded-md bg-[#232323] text-white focus:outline-none focus:ring focus:ring-dark-green text-sm"
 											/>
 										</div>
 									</>
@@ -338,7 +338,7 @@ export default function Signin() {
 
 						<button
 							type="submit"
-							className="w-full bg-dark-green text-black p-2 rounded-md transition duration-300 hover:bg-opacity-90 text-sm"
+							className="w-full bg-white text-black p-2 rounded-md transition duration-300 hover:bg-opacity-90 text-sm"
 						>
 							{isLogin ? "Login" : "Register"}
 						</button>
@@ -352,7 +352,7 @@ export default function Signin() {
 						</span>
 						<button
 							onClick={() => setIsLogin(!isLogin)}
-							className="text-dark-green underline ml-2"
+							className="text-white underline ml-2"
 						>
 							{isLogin ? "Register" : "Login"}
 						</button>
