@@ -84,8 +84,8 @@ exports.createEvent = async (req, res) => {
 
 // Register volunteer for an event
 exports.registerVolunteer = async (req, res) => {
-    if (req.user.role !== "volunteer") {
-        return res.status(403).json({ message: "Only volunteers can register" });
+    if (req.user.role === "organization") {
+        return res.status(403).json({ message: "Only volunteers and admin can register" });
     }
 
     const volunteer_id = req.user.id;

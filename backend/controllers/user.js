@@ -202,4 +202,16 @@ const getData = async (req, res) => {
 	}
 };
 
-module.exports = { getData, updateProfile }; // Correctly export the function
+const getMyEvents = async (req, res)=>{
+	try {
+		const [events] = await db.query(`
+			SELECT * from PROGRAMMES join VOLUNTEER_PROGRAMMES on PROGRAMMES.programme_id = VOLUNTEER_PROGRAMMES.programme_id where volunteer_id = ?;
+		`, [req.user.id]);
+		res.json(events);
+	}
+	catch (error) {
+		res.status(500).json({ message: "Error fetching events", error });
+	}
+}
+
+module.exports = { getData, updateProfile, getMyEvents }; // Correctly export the function

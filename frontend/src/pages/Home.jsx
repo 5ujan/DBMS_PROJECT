@@ -2,92 +2,52 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Nav';
 import { useStore } from '../store/store';
+import ApiServices from '../frontend-lib/api/ApiServices';
 
 const Home = () => {
   const navigate = useNavigate();
   const { user } = useStore();
   const [upcomingEvents, setUpcomingEvents] = useState([]);
   const [completedEvents, setCompletedEvents] = useState([]);
-
-  useEffect(() => {
-    // Predefined event data (updated to 2025)
-    const realEvents = [
-      {
-        id: 1,
-        title: "Blood Donation Camp",
-        description: "A successful blood donation drive that helped save hundreds of lives.",
-        date: "2025-01-15",
-        image: "https://www.nidirect.gov.uk/sites/default/files/images/news/blood-donation.jpg",
-      },
-      {
-        id: 2,
-        title: "Community Cleanliness Drive",
-        description: "A dedicated effort to clean up local parks and streets, making our environment healthier.",
-        date: "2025-02-10",
-        image: "https://otterwaiver.com/wp-content/uploads/2021/03/young-man-cleaning-the-beach-VTN7W6U-scaled.jpg",
-      },
-      {
-        id: 3,
-        title: "Tree Plantation Program",
-        description: "Planting trees to contribute to a greener future and combat climate change.",
-        date: "2025-03-20",
-        image: "https://cdn.downtoearth.org.in/library/large/2022-09-15/0.08976900_1663241450_istock-1248915720-(1).jpg",
-      },
-      {
-        id: 4,
-        title: "Food Distribution Drive",
-        description: "Providing meals to underprivileged families in our community.",
-        date: "2025-04-05",
-        image: "https://imgnew.outlookindia.com/public/uploads/articles/2021/2/13/Food-distribution_20200825.jpg",
-      },
-      {
-        id: 5,
-        title: "Educational Workshop",
-        description: "A program to support education and skill development for young learners.",
-        date: "2025-05-12",
-        image: "https://www.worcester.ac.uk/images/text-area-images/mpc-workshops2.JPG?width=880",
-      },
-      {
-        id: 6,
-        title: "Health Awareness Campaign",
-        description: "Promoting health and wellness through free check-ups and awareness sessions.",
-        date: "2025-06-25",
-        image: "https://ekarmachari.com/wp-content/uploads/2021/05/242303958fchv.jpeg",
-      }
-    ];
     
-    // Get current date (start of day)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
+      useEffect(() => {
+        // Predefined event data (updated to 2025)
+        (async () => {
+          console.log("enters")
+          const data = await ApiServices.getMyEvents()
+          console.log({fetcedEvents:data})
+          // Get current date (start of day)
+          const today = new Date();
+          
     // Filter and sort upcoming events (limit to 3)
-    const upcoming = realEvents
+    const upcoming = data
       .filter(event => {
-        const eventDate = new Date(event.date);
+        const eventDate = new Date(event.start_date);
         return eventDate >= today;
       })
       .sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
+        const dateA = new Date(a.start_date);
+        const dateB = new Date(b.start_date);
         return dateA - dateB;
       })
       .slice(0, 3);
     
     // Filter and sort completed events (most recent first, limit to 3)
-    const completed = realEvents
+    const completed = data
       .filter(event => {
-        const eventDate = new Date(event.date);
+        const eventDate = new Date(event.end_date);
         return eventDate < today;
       })
       .sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
+        const dateA = new Date(a.end_date);
+        const dateB = new Date(b.end_date);
         return dateB - dateA; // Reverse order for completed events
       })
       .slice(0, 3);
     
     setUpcomingEvents(upcoming);
     setCompletedEvents(completed);
+  })();
   }, []);
 
   // Function to determine event status
@@ -116,6 +76,7 @@ const Home = () => {
   // Format date to be more readable
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    console.log({dateString})
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
@@ -140,7 +101,7 @@ const Home = () => {
             <div className="mb-2">
               <h4 className="text-xl font-bold truncate">{event.title}</h4>
             </div>
-            <p className="text-gray-400 text-sm mb-3">{formatDate(event.date)}</p>
+            <p className="text-gray-400 text-sm mb-3">{formatDate(event.start_date)} -  {formatDate(event.end_date)}</p>
             <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">{event.description}</p>
             <button 
               className={`w-full font-medium py-2 px-4 rounded-md transition-colors duration-300 mt-auto ${isCompleted ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}

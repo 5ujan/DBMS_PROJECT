@@ -4,6 +4,7 @@ import axios from 'axios';
 import Navbar from '../components/Nav';
 import { useStore } from '../store/store';
 import ApiServices from '../frontend-lib/api/ApiServices';
+import { showToast } from '../utils/toasts';
 
 const Events = () => {
   const [events, setEvents] = useState([]);
@@ -162,8 +163,8 @@ const EventModal = ({ event, onClose, user, navigate, onEdit }) => {
     try {
       const response = await ApiServices.registerVolunteer(event.programme_id);
       if (response) {
-        alert('Registered successfully!');
-        navigate('/profile');
+        showToast('Registered successfully!');
+        // navigate('/profile');
       } else {
         alert('Failed to register for event');
       }
@@ -190,7 +191,7 @@ const EventModal = ({ event, onClose, user, navigate, onEdit }) => {
           <p><strong>Start Date:</strong> {event?.start_date?.split("T")[0]}</p>
           <p><strong>End Date:</strong> {event?.end_date?.split("T")[0]}</p>
           <p><strong>Description:</strong> {event?.description}</p>
-          {user?.role === 'volunteer' && (
+          {user?.role !== 'organization' && (
             <button className="bg-teal-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-teal-600" onClick={handleRegister}>
               Register for Event
             </button>

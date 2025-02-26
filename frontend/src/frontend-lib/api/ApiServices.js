@@ -1,4 +1,5 @@
 import axios from "axios";
+import { showToast } from "../../utils/toasts";
 
 class ApiServices {
     constructor() {
@@ -54,14 +55,20 @@ class ApiServices {
     async getUser() {
         console.log("getusercalled")
         try {
-            const { data, status } = await this.api.get("/user");
-            console.log({data})
-            if (status === 200) {
-                return data;
+            let token = localStorage.getItem("token")
+            if(token){
+
+                const { data, status } = await this.api.get("/user");
+                console.log({data})
+                if (status === 200) {
+                    return data;
+                }
+                return "Failed to fetch user data";
             }
-            return "Failed to fetch user data";
+            else return false
         } catch (error) {
-            return error.message;
+            return false
+            // return error.message;
         }
     }
 
@@ -180,6 +187,18 @@ class ApiServices {
             return "Failed to register volunteer";
         } catch (error) {
             return error.message;
+        }
+    }
+
+    async getMyEvents() {  
+        try{
+
+            const {data:response, status} =await this.api.get("/user/events") 
+            if (status===200) return response
+            else return false
+        }catch(e){
+            console.log(e)
+            showToast("Failed to fetch", "error")
         }
     }
 

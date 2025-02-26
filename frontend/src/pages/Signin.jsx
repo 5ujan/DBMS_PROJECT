@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ApiServices from "../frontend-lib/api/ApiServices";
 import { useStore } from "../store/store";
+import { showToast } from "../utils/toasts";
 
 export default function Signin() {
-  const {user, setUser} = useStore()
+	const { user, setUser } = useStore();
 	const [isLogin, setIsLogin] = useState(true); // Toggle between Login and Register forms
 	const [formData, setFormData] = useState({
 		name: "",
@@ -22,11 +23,12 @@ export default function Signin() {
 	useEffect(() => {
 		const token = localStorage.getItem("token");
 		if (token) {
-      console.log({token})
-		ApiServices.getUser()
+			console.log({ token });
+			ApiServices.getUser()
 				.then((user) => {
-          setUser(user)
-          navigate("/dashboard")})
+					setUser(user);
+					navigate("/dashboard");
+				})
 				.catch(() => console.log("Invalid token or expired"));
 		}
 	}, [navigate]);
@@ -46,6 +48,7 @@ export default function Signin() {
 			let response;
 			if (isLogin) {
 				// Login request
+				console.log(formData.email, formData.password);
 				response = await ApiServices.login({
 					email: formData.email,
 					password: formData.password,
@@ -60,9 +63,12 @@ export default function Signin() {
 					dob: formattedDob,
 				});
 			}
-      console.log(response)
+			console.log(response);
 			// Token is automatically stored in ApiServices, so no need to set it manually
-			if(response) navigate("/dashboard"); // Navigate to home page on successful login/registration
+			if (response) {
+				navigate("/dashboard"); // Navigate to home page on successful login/registration
+				showToast("Login successful", "success");
+			} else showToast("Login failed", "error");
 		} catch (err) {
 			setError("Something went wrong, please try again.");
 			console.error(err);
