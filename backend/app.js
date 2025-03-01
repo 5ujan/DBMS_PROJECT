@@ -13,7 +13,7 @@ const fileupload = require("express-fileupload");
 const { auth } = require("./routes/auth.js");
 const { user } = require("./routes/user");
 const {event} = require("./routes/event.js");
-const { donor } = require("./routes/donor.js");
+const { donation } = require("./routes/donation.js");
 const {skill} = require("./routes/skill.js")
 const {image} = require("./routes/image")
 const {admin} = require("./routes/admin.js")
@@ -38,7 +38,7 @@ app.use("/api", auth);  // Auth routes (login, register, etc.)
 
 // Apply authentication middleware for user routes
 app.use("/api", authenticate);  // Authenticate before user routes
-app.use("/api", user, event, donor, skill, image, organization, admin);  // User routes (accessible only after authentication)
+app.use("/api", user, event, donation, skill, image, organization, admin);  // User routes (accessible only after authentication)
 
 app.listen(5555, () => {
     console.log("server started on port", 5555);

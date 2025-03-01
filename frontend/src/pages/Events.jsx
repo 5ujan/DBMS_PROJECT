@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import Navbar from '../components/Nav';
 import { useStore } from '../store/store';
 import ApiServices from '../frontend-lib/api/ApiServices';
@@ -17,19 +16,27 @@ const Events = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); // For showing edit event modal
   const [eventData, setEventData] = useState({ programme_name: '', description: '', start_date: '', end_date: '' });
   const navigate = useNavigate();
+  const [uploading, setUploading] = useState(false);
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [eventsPerPage] = useState(6);
+  const [loading, setLoading] = useState(true);
+  
+  const fetchEvents = async () => {
+    setLoading(true);
+    try {
+      const response = await ApiServices.getAllEvents(); // Use the ApiServices method
+      setEvents(response);
+      setFilteredEvents(response);
+    } catch (error) {
+      console.error('Error fetching events:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await ApiServices.getAllEvents(); // Use the ApiServices method
-        // console.log(response)
-        setEvents(response);
-        setFilteredEvents(response);
-      } catch (error) {
-        console.error('Error fetching events:', error);
-      }
-    };
-
     fetchEvents();
   }, []);
 
@@ -39,7 +46,31 @@ const Events = () => {
     } else if (filter === 'myEvents' && user?.role === 'organization') {
       setFilteredEvents(events.filter(event => event.organization_name === user?.name));
     }
+    setCurrentPage(1); // Reset to first page when filter changes
   }, [filter, events, user]);
+
+  // Get current events for pagination
+  const indexOfLastEvent = currentPage * eventsPerPage;
+  const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
+  const currentEvents = filteredEvents.slice(indexOfFirstEvent, indexOfLastEvent);
+  const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  
+  // Navigate to previous page
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+  
+  // Navigate to next page
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
 
   const openEventModal = (event) => {
     setSelectedEvent(event);
@@ -47,7 +78,7 @@ const Events = () => {
   };
 
   const openCreateModal = (event=false) => {
-    {event?setSelectedEvent(event):setSelectedEvent(eventData)}
+    {event ? setSelectedEvent(event) : setSelectedEvent(eventData)}
     setIsCreateModalOpen(true);   
   };
 
@@ -64,22 +95,24 @@ const Events = () => {
   };
 
   const handleCreateEvent = async () => {
-
+    if(uploading) return;
+    setUploading(true);
     if(eventData.image instanceof File){
       const imageUrl = await ApiServices.uploadPhotoToCloudinary(eventData.image);
       eventData.image = imageUrl;
     }
     else{ 
-      console.log("not a file")
+      console.log("not a file");
     }
     try {
-      const response = await ApiServices.createEvent(eventData)
+      await ApiServices.createEvent(eventData);
       // After successful creation, fetch events again and close the modal
-      console.log(eventData)
-      setEvents([...events, response.data]);
+      await fetchEvents();
       closeModal();
     } catch (error) {
       console.error('Error creating event:', error);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -89,7 +122,10 @@ const Events = () => {
       selectedEvent.image = imageUrl;
     }
     try {
-      const response = await ApiServices.updateEvent(selectedEvent.programme_id, {...selectedEvent,start_date:selectedEvent.start_date.split("T")[0],end_date:selectedEvent.end_date.split("T")[0]});
+      const response = await ApiServices.updateEvent(
+        selectedEvent.programme_id, 
+        {...selectedEvent, start_date: selectedEvent.start_date.split("T")[0], end_date: selectedEvent.end_date.split("T")[0]}
+      );
       // After successful update, fetch events again and close the modal
       const updatedEvents = events.map(event => (event.programme_id === response.programme_id ? response : event));
       setEvents(updatedEvents);
@@ -97,55 +133,131 @@ const Events = () => {
     } catch (error) {
       console.error('Error updating event:', error);
     }
-  }
+  };
+
   return (
     <div className="bg-black text-white w-full min-h-screen">
       <Navbar />
       <div className="p-6">
-      {user?.role === 'organization' && (
+        {user?.role === 'organization' && (
           <div className="text-end self-end mb-10 flex gap-4 justify-end">
             <button
               onClick={() => openCreateModal(false)}
               className="bg-dark-green font-bold text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200"
             >
-              Add Events
+              Add Event
             </button>
             <button
               onClick={() => setFilter(filter === 'all' ? 'myEvents' : 'all')}
               className="bg-dark-green font-bold text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200"
             >
-              {filter==='all'?'Show My Events':'Show All Events'}
+              {filter === 'all' ? 'Show My Events' : 'Show All Events'}
             </button>
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredEvents.length > 0 ? (
-            filteredEvents.map((event) => (
-              <div key={event.programme_id} className="bg-gray-800 p-4 rounded-lg shadow-lg">
-              <img
-                src={event.image}
-                alt={event.title}
-                className="w-full h-48 object-cover rounded-md"
-              />
-              <h3 className="text-xl font-semibold mt-3">{event.programme_name}</h3>
-              <div className='flex justify-between items-center'>
-              <h2 className='text-lg font-semibold mt-2'>{event.organization_name}</h2>
-              <p className="text-gray-400 text-sm mt-1">{event.start_date.split('T')[0]}</p>
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-dark-green"></div>
+          </div>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {currentEvents.length > 0 ? (
+                currentEvents.map((event) => (
+                  <div key={event.programme_id} className="bg-gray-800 p-4 rounded-lg shadow-lg">
+                    <img
+                      src={event.image}
+                      alt={event.title}
+                      className="w-full h-48 object-cover rounded-md"
+                    />
+                    <h3 className="text-xl font-semibold mt-3">{event.programme_name}</h3>
+                    <div className='flex justify-between items-center'>
+                      <h2 className='text-lg font-semibold mt-2'>{event.organization_name}</h2>
+                      <p className="text-gray-400 text-sm mt-1">{event.start_date.split('T')[0]}</p>
+                    </div>
+                    <p className="text-gray-300 mt-2 line-clamp-2">{event.description}</p>
+                    <button
+                      onClick={() => openEventModal(event)}
+                      className="bg-dark-green text-white px-4 py-2 mt-4 rounded-md hover:bg-green-700"
+                    >
+                      View Details
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-10">
+                  <p className="text-xl">No events found.</p>
+                </div>
+              )}
+            </div>
+
+            {/* Pagination */}
+            {filteredEvents.length > eventsPerPage && (
+              <div className="flex justify-center mt-8">
+                <nav className="flex items-center">
+                  <button
+                    onClick={goToPreviousPage}
+                    disabled={currentPage === 1}
+                    className={`px-3 py-1 mx-1 rounded-md ${
+                      currentPage === 1 
+                        ? 'bg-gray-700 text-gray-400 cursor-not-allowed' 
+                        : 'bg-dark-green text-white hover:bg-green-700'
+                    }`}
+                  >
+                    Previous
+                  </button>
+                  
+                  <div className="flex">
+                    {Array.from({ length: totalPages }, (_, i) => {
+                      // Show 1, 2, ..., currentPage-1, currentPage, currentPage+1, ..., totalPages-1, totalPages
+                      // Or show just a few pages around current page if there are many pages
+                      if (
+                        i === 0 || // First page
+                        i === totalPages - 1 || // Last page
+                        (i >= currentPage - 2 && i <= currentPage) || // Current and 2 before
+                        (i <= currentPage + 1 && i >= currentPage) // Current and 1 after
+                      ) {
+                        return (
+                          <button
+                            key={i}
+                            onClick={() => paginate(i + 1)}
+                            className={`px-3 py-1 mx-1 rounded-md ${
+                              currentPage === i + 1
+                                ? 'bg-green-600 text-white'
+                                : 'bg-gray-700 text-white hover:bg-gray-600'
+                            }`}
+                          >
+                            {i + 1}
+                          </button>
+                        );
+                      } else if (
+                        (i === 1 && currentPage > 3) || 
+                        (i === totalPages - 2 && currentPage < totalPages - 2)
+                      ) {
+                        // Show ellipsis for skipped pages
+                        return <span key={i} className="px-3 py-1 mx-1">...</span>;
+                      }
+                      return null;
+                    })}
+                  </div>
+                  
+                  <button
+                    onClick={goToNextPage}
+                    disabled={currentPage === totalPages}
+                    className={`px-3 py-1 mx-1 rounded-md ${
+                      currentPage === totalPages
+                        ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                        : 'bg-dark-green text-white hover:bg-green-700'
+                    }`}
+                  >
+                    Next
+                  </button>
+                </nav>
               </div>
-              <p className="text-gray-300 mt-2">{event.description}</p>
-                <button
-                  onClick={() => openEventModal(event)}
-                  className="bg-dark-green text-white px-4 py-2 mt-4 rounded-md hover:bg-green-700"
-                >
-                  View Details
-                </button>
-              </div>
-            ))
-          ) : (
-            <p>No events found.</p>
-          )}
-        </div>
+            )}
+          </>
+        )}
       </div>
 
       {/* Event Detail Modal */}
@@ -158,13 +270,34 @@ const Events = () => {
   );
 };
 
-const EventModal = ({ event, onClose, user, navigate, onEdit }) => {
+export const EventModal = ({ event, onClose, user, navigate, onEdit }) => {
+  const [registeredVolunteers, setRegisteredVolunteers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchVolunteers = async () => {
+      setLoading(true);
+      try {
+        const response = await ApiServices.getEventVolunteers(event.programme_id);
+        setRegisteredVolunteers(response);
+      } catch (error) {
+        console.error('Error fetching volunteers:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVolunteers();
+  }, [event.programme_id]);
+
   const handleRegister = async () => {
     try {
       const response = await ApiServices.registerVolunteer(event.programme_id);
       if (response) {
         showToast('Registered successfully!');
-        // navigate('/profile');
+        // Refresh volunteer list after registration
+        const updatedVolunteers = await ApiServices.getEventVolunteers(event.programme_id);
+        setRegisteredVolunteers(updatedVolunteers);
       } else {
         alert('Failed to register for event');
       }
@@ -173,47 +306,119 @@ const EventModal = ({ event, onClose, user, navigate, onEdit }) => {
     }
   };
 
-    console.log(event)
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-gray-800 p-6 rounded-lg w-[90%] h-[90%] overflow-y-auto">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">{event?.programme_name}</h2>
-          <button onClick={onClose} className="text-black text-lg font-bold">X</button>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+      <div className="bg-gray-800 rounded-lg w-full max-w-4xl h-auto max-h-[90vh] overflow-hidden flex flex-col">
+        {/* Header with close button */}
+        <div className="p-4 border-b border-gray-700 flex justify-between items-center sticky top-0 bg-gray-800 z-10">
+          <h2 className="text-xl md:text-2xl font-semibold truncate">{event?.programme_name}</h2>
+          <button 
+            onClick={onClose} 
+            className="bg-gray-700 hover:bg-gray-600 rounded-full w-8 h-8 flex items-center justify-center"
+          >
+            <span className="text-white font-medium">✕</span>
+          </button>
         </div>
-        {event?.image && (
-          <div className="mb-4 w-56 h-56 overflow-hidden">
-            <img src={event.image} alt="Event" className="w-full h-full object-contain rounded" />
-          </div>
-        )}
-        <div className="mt-4">
-          <p><strong>Organizer:</strong> {event?.organization_name}</p>
-          <p><strong>Start Date:</strong> {event?.start_date?.split("T")[0]}</p>
-          <p><strong>End Date:</strong> {event?.end_date?.split("T")[0]}</p>
-          <p><strong>Description:</strong> {event?.description}</p>
-          {user?.role !== 'organization' && (
-            <div className='flex flow-row gap-4'>
-            <button className="bg-teal-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-teal-600" onClick={handleRegister}>
-              Register for Event
-            </button>
-            <button onClick={()=> navigate("/organization/"+event.organization_id)} className="bg-teal-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-teal-600">
-              View Organization Page
-            </button>
+
+        {/* Scrollable content */}
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Left column: Image and event details */}
+            <div>
+              {event?.image && (
+                <div className="mb-4 w-full max-w-xs mx-auto h-auto max-h-64 overflow-hidden rounded-lg">
+                  <img src={event.image} alt="Event" className="w-full h-full object-contain" />
+                </div>
+              )}
+
+              <div className="space-y-3 bg-gray-700 p-4 rounded-lg">
+                <p><strong>Organizer:</strong> {event?.organization_name}</p>
+                <p><strong>Start Date:</strong> {event?.start_date?.split("T")[0]}</p>
+                <p><strong>End Date:</strong> {event?.end_date?.split("T")[0]}</p>
+                <p><strong>Description:</strong> {event?.description}</p>
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {user?.role !== 'organization' && (
+                  <>
+                    <button 
+                      className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 flex-grow md:flex-grow-0" 
+                      onClick={handleRegister}
+                    >
+                      Register for Event
+                    </button>
+                    <button 
+                      onClick={() => navigate("/organization/" + event.organization_id)} 
+                      className="bg-teal-500 text-white px-4 py-2 rounded-md hover:bg-teal-600 flex-grow md:flex-grow-0"
+                    >
+                      View Organization
+                    </button>
+                  </>
+                )}
+                {user?.role === 'organization' && event?.organization_name === user?.name && (
+                  <button 
+                    onClick={() => onEdit(event)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                  >
+                    Edit Event
+                  </button>
+                )}
+              </div>
             </div>
-          )}
-          {user?.role === 'organization' && event?.organization_name === user?.name && (
-            <button 
-            onClick={()=>onEdit(event)}
-             className="bg-blue-500 text-white px-4 py-2 mt-4 rounded-md hover:bg-blue-600">
-              Edit Event
-            </button>
-          )}
+
+            {/* Right column: Volunteer list */}
+            <div className="bg-gray-700 p-4 rounded-lg">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="text-lg font-medium">Registered Volunteers</h3>
+                <span className="bg-teal-500 text-white px-2 py-1 rounded-full text-sm">
+                  {registeredVolunteers.length} volunteer{registeredVolunteers.length !== 1 ? 's' : ''}
+                </span>
+              </div>
+              
+              {loading ? (
+                <div className="flex justify-center items-center h-64">
+                  <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-teal-500"></div>
+                </div>
+              ) : registeredVolunteers.length > 0 ? (
+                <div className="overflow-y-auto max-h-64 pr-1">
+                  <ul className="space-y-2">
+                    {registeredVolunteers.map((volunteer, index) => (
+                      <li 
+                        key={volunteer.id || index} 
+                        className="bg-gray-800 p-3 rounded-lg flex items-center gap-3"
+                      >
+                        {volunteer.avatar ? (
+                          <img 
+                            src={volunteer.avatar} 
+                            alt="" 
+                            className="w-10 h-10 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-10 h-10 rounded-full bg-teal-700 flex items-center justify-center">
+                            {volunteer.name?.charAt(0) || "V"}
+                          </div>
+                        )}
+                        <div>
+                          <p className="font-medium">{volunteer.name || "Anonymous Volunteer"}</p>
+                          {volunteer.email && <p className="text-sm text-gray-400">{volunteer.email}</p>}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : (
+                <div className="bg-gray-800 p-6 rounded-lg text-center h-64 flex items-center justify-center">
+                  <p className="text-gray-400">No volunteers have registered yet</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
-const EditEventModal = ({ event,setEventData, onClose, onEdit }) => {
+export const EditEventModal = ({ event,setEventData, onClose, onEdit }) => {
   const [imagePreview, setImagePreview] = useState(event.image || null);
   
   const handleInputChange = (e) => {

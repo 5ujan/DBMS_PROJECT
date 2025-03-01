@@ -141,6 +141,18 @@ class ApiServices {
             return error.message;
         }
     }
+    async getEventVolunteers(eventId) {
+        try {   
+            const { data, status } = await this.api.get(`/event/${eventId}/volunteers`);
+            if (status === 200) {   
+                return data;
+            }else{
+                return false
+            }   
+        } catch (error) {
+            return false
+        }
+    }
 
     async createEvent(data) {
         try {
@@ -294,6 +306,46 @@ class ApiServices {
             return error.message;
         }
     }
+
+    async makeDonation(payload) {  
+        try{
+            const {organization_id} = payload
+            const {data, status} = await this.api.post(`/organization/${organization_id}/donate`, payload)
+            if (status===201) return data
+            else return false
+        } catch(e){ 
+            console.log(e)
+            showToast("Failed to donate", "error")
+        }
+    }
+    async getDonationsByOrganization(organizationId) {
+        try {
+            const { data, status } = await this.api.get(`/donation/organization/${organizationId}/`);
+            if (status === 200) {
+                return data;  // Returning the donations data
+            } else {
+                return false;  // Returning false if something goes wrong
+            }
+        } catch (e) {
+            console.log(e);
+            showToast("Failed to fetch donations", "error");
+        }
+    }
+    
+    async getAllDonations() {
+        try {
+            const { data, status } = await this.api.get(`/donations`);
+            if (status === 200) {
+                return data;  // Returning the donations data
+            } else {
+                return false;  // Returning false if something goes wrong
+            }
+        } catch (e) {
+            console.log(e);
+            showToast("Failed to fetch donations", "error");
+        }
+    }
+    
 
     async adminGetStats() {
         try {

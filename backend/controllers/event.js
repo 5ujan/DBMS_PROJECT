@@ -184,3 +184,18 @@ exports.deleteEvent = async (req, res) => {
         res.status(500).json({ message: "Error deleting event", error });
     }
 };
+
+
+// exports.getEventVolunteers = async (req, res) => {
+//     const { id } = req.params;
+//     try {
+//         const [volunteers] = await db.query(`
+//             SELECT v.volunteer_id, v.name, v.email, v.phone, v
+//             FROM VOLUNTEER_PROGRAMMES vp
+//             JOIN VOLUNTEER v ON vp.volunteer_id = v.volunteer_id
+//             WHERE vp.programme_id = ?
+//         `, [id]); 
+//     }catch(error){
+//         res.status(500).json({ message: "Error fetching volunteers", error });
+//     }   
+// }

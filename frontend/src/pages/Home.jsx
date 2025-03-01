@@ -4,6 +4,8 @@ import Navbar from '../components/Nav';
 import { useStore } from '../store/store';
 import ApiServices from '../frontend-lib/api/ApiServices';
 import {  Heart } from 'lucide-react';
+import { EventModal } from "./Events";
+
 
 
 const Home = () => {
@@ -274,44 +276,44 @@ const Home = () => {
   );
 };
 
-const EventModal = ({ event, onClose}) => {
-  const handleRegister = async () => {
-    try {
-      const response = await ApiServices.registerVolunteer(event.programme_id);
-      if (response) {
-        showToast('Registered successfully!');
-        // navigate('/profile');
-      } else {
-        alert('Failed to register for event');
-      }
-    } catch (error) {
-      console.error('Error registering for event:', error);
-    }
-  };
+// const EventModal = ({ event, onClose}) => {
+//   const handleRegister = async () => {
+//     try {
+//       const response = await ApiServices.registerVolunteer(event.programme_id);
+//       if (response) {
+//         showToast('Registered successfully!');
+//         // navigate('/profile');
+//       } else {
+//         alert('Failed to register for event');
+//       }
+//     } catch (error) {
+//       console.error('Error registering for event:', error);
+//     }
+//   };
 
-    console.log(event)
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-gray-800 p-6 rounded-lg w-[90%] h-[90%] overflow-y-auto">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">{event?.programme_name}</h2>
-          <button onClick={onClose} className="text-black text-lg font-bold">X</button>
-        </div>
-        {event?.image && (
-          <div className="mb-4 w-56 h-56 overflow-hidden">
-            <img src={event.image} alt="Event" className="w-full h-full object-contain rounded" />
-          </div>
-        )}
-        <div className="mt-4">
-          <p><strong>Organizer:</strong> {event?.organization_name}</p>
-          <p><strong>Start Date:</strong> {event?.start_date?.split("T")[0]}</p>
-          <p><strong>End Date:</strong> {event?.end_date?.split("T")[0]}</p>
-          <p><strong>Description:</strong> {event?.description}</p>
+//     console.log(event)
+//   return (
+//     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+//       <div className="bg-gray-800 p-6 rounded-lg w-[90%] h-[90%] overflow-y-auto">
+//         <div className="flex justify-between items-center">
+//           <h2 className="text-xl font-semibold">{event?.programme_name}</h2>
+//           <button onClick={onClose} className="text-black text-lg font-bold">X</button>
+//         </div>
+//         {event?.image && (
+//           <div className="mb-4 w-56 h-56 overflow-hidden">
+//             <img src={event.image} alt="Event" className="w-full h-full object-contain rounded" />
+//           </div>
+//         )}
+//         <div className="mt-4">
+//           <p><strong>Organizer:</strong> {event?.organization_name}</p>
+//           <p><strong>Start Date:</strong> {event?.start_date?.split("T")[0]}</p>
+//           <p><strong>End Date:</strong> {event?.end_date?.split("T")[0]}</p>
+//           <p><strong>Description:</strong> {event?.description}</p>
           
-        </div>
-      </div>
-    </div>
-  );
-};
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 export default Home;

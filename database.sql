@@ -68,6 +68,34 @@ INSERT INTO `DONATIONS` VALUES ('f25b8f9e-3498-41b5-9621-ae97554031ea','9fa4355d
 UNLOCK TABLES;
 
 --
+-- Table structure for table `DONORS`
+--
+
+DROP TABLE IF EXISTS `DONORS`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `DONORS` (
+  `donor_id` varchar(50) DEFAULT NULL,
+  `donor_type` enum('individual','organization') NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  UNIQUE KEY `email` (`email`),
+  KEY `donor_id` (`donor_id`),
+  CONSTRAINT `DONORS_ibfk_1` FOREIGN KEY (`donor_id`) REFERENCES `VOLUNTEER` (`volunteer_id`) ON DELETE CASCADE,
+  CONSTRAINT `DONORS_ibfk_2` FOREIGN KEY (`donor_id`) REFERENCES `ORGANIZATION` (`organization_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `DONORS`
+--
+
+LOCK TABLES `DONORS` WRITE;
+/*!40000 ALTER TABLE `DONORS` DISABLE KEYS */;
+/*!40000 ALTER TABLE `DONORS` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ORGANIZATION`
 --
 
@@ -279,4 +307,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-01 19:24:39
+-- Dump completed on 2025-03-01 19:22:45
