@@ -1,79 +1,116 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
+import { FaUserFriends, FaBuilding, FaCalendarAlt, FaChartLine } from "react-icons/fa";
 import ApiServices from "../../frontend-lib/api/ApiServices";
-import { showToast } from "../../utils/toasts";
 
 const Dashboard = () => {
-	const [stats, setStats] = useState({
-		volunteers: 0,
-		organizations: 0,
-		events: 0,
-	});
+  const [stats, setStats] = useState({
+    volunteers: 0,
+    organizations: 0,
+    events: 0,
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
-	useEffect(() => {
-		const fetchCounts = async () => {
-			try {
-				const data= await ApiServices.adminGetStats();
-				
-				setStats(data);
-			} catch (error) {
-				console.error("Error fetching stats:", error);
-			}
-		};
+  useEffect(() => {
+    const fetchCounts = async () => {
+      setIsLoading(true);
+      try {
+        const data = await ApiServices.adminGetStats();
+        setStats(data);
+      } catch (error) {
+        console.error("Error fetching stats:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-		fetchCounts();
-	}, []);
+    fetchCounts();
+  }, []);
 
-	return (
-		<div className="p-6 space-y-6 w-full">
-			<div className="flex w-full justify-center gap-4">
-				<Link
-					to="/dashboard"
-					className="bg-gray-500 justify-self-start flex gap-1 items-center text-white px-6 py-2 rounded-lg shadow hover:bg-gray-600"
-				>
-					<IoIosArrowBack></IoIosArrowBack> Back to Normal Mode{" "}
-				</Link>
-				<Link
-					to="/admin/volunteers"
-					className="bg-blue-600 text-white px-6 py-2 rounded-lg shadow hover:bg-blue-700"
-				>
-					Manage Volunteers
-				</Link>
-				<Link
-					to={"/admin/organizations"}
-					className="bg-green-600 text-white px-6 py-2 rounded-lg shadow hover:bg-green-700"
-				>
-					Manage Organizations
-				</Link>
-				<Link
-					to={"/admin/events"}
-					className="bg-purple-600 text-white px-6 py-2 rounded-lg shadow hover:bg-purple-700"
-				>
-					Manage Events
-				</Link>
-			</div>
-			{/* Stats Section */}
-			<div className="grid grid-cols-3 mx-10 gap-6 text-center">
-				<div className="bg-blue-500 text-white p-4 rounded-lg shadow-md">
-					<h2 className="text-2xl font-bold">{stats.volunteers}</h2>
-					<p className="text-lg">Volunteers</p>
-				</div>
-				<div className="bg-green-500 text-white p-4 rounded-lg shadow-md">
-					<h2 className="text-2xl font-bold">
-						{stats.organizations}
-					</h2>
-					<p className="text-lg">Organizations</p>
-				</div>
-				<div className="bg-purple-500 text-white p-4 rounded-lg shadow-md">
-					<h2 className="text-2xl font-bold">{stats.events}</h2>
-					<p className="text-lg">Events</p>
-				</div>
-			</div>
+  const cards = [
+    {
+      title: "Volunteers",
+      count: stats.volunteers,
+      icon: <FaUserFriends className="text-blue-100" size={32} />,
+      color: "bg-gradient-to-br from-blue-500 to-blue-600",
+      link: "/admin/volunteers",
+      buttonText: "Manage Volunteers",
+    },
+    {
+      title: "Organizations",
+      count: stats.organizations,
+      icon: <FaBuilding className="text-green-100" size={32} />,
+      color: "bg-gradient-to-br from-green-500 to-green-600",
+      link: "/admin/organizations",
+      buttonText: "Manage Organizations",
+    },
+    {
+      title: "Events",
+      count: stats.events,
+      icon: <FaCalendarAlt className="text-purple-100" size={32} />,
+      color: "bg-gradient-to-br from-purple-500 to-purple-600",
+      link: "/admin/events",
+      buttonText: "Manage Events",
+    },
+  ];
 
-			{/* Buttons Section */}
-		</div>
-	);
+  return (
+    <div className="min-h-screen bg-gray-900 p-6 w-full">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex items-center">
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 rounded-lg shadow-sm hover:bg-gray-100 transition-colors"
+            >
+              <IoIosArrowBack />
+              <span>Back to Normal Mode</span>
+            </Link>
+          </div>
+          <div className="flex items-center gap-2">
+            <FaChartLine className="text-white" />
+            <h1 className="text-xl font-bold text-white">Admin Dashboard</h1>
+          </div>
+        </div>
+
+        {/* Status Cards */}
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
+          {cards.map((card, index) => (
+            <div
+              key={index}
+              className={`${card.color} rounded-lg shadow-lg overflow-hidden`}
+            >
+              <div className="p-6 text-white">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex flex-col">
+                    <p className="text-lg font-medium opacity-90">{card.title}</p>
+                    {isLoading ? (
+                      <div className="h-8 w-12 bg-white/20 animate-pulse rounded mt-1"></div>
+                    ) : (
+                      <h2 className="text-3xl font-bold">{card.count}</h2>
+                    )}
+                  </div>
+                  <div className="p-3 rounded-full bg-white/10 backdrop-blur-sm">
+                    {card.icon}
+                  </div>
+                </div>
+                <Link
+                  to={card.link}
+                  className="block w-full text-center py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg transition-colors text-white font-medium mt-4"
+                >
+                  {card.buttonText}
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Recent Activity or Additional Content */}
+      </div>
+    </div>
+  );
 };
 
 export default Dashboard;

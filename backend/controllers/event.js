@@ -159,18 +159,18 @@ exports.updateEvent = async (req, res) => {
 
 // Delete event (Only organizations who created it)
 exports.deleteEvent = async (req, res) => {
-    if (req.user.role !== "organization") {
+    if (req.user.role !== "organization" && req.user.role !== "admin") {
         return res.status(403).json({ message: "Access denied" });
     }
 
     const { id } = req.params;
-    const organization_id = req.user.id;
+    // const organization_id = req.user.id;
 
     try {
         // Check if event exists and belongs to the organization
         const [event] = await db.query(`
-            SELECT * FROM PROGRAMMES WHERE programme_id = ? AND organization_id = ?
-        `, [id, organization_id]);
+            SELECT * FROM PROGRAMMES WHERE programme_id = ?
+        `, [id]);
 
         if (event.length === 0) {
             return res.status(404).json({ message: "Event not found or unauthorized" });

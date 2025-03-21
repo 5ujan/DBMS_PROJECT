@@ -182,12 +182,14 @@ class ApiServices {
         try {
             const { status } = await this.api.delete(`/event/${id}`);
             if (status === 200) {
-                return "Event deleted successfully";
+                return true;
             }
-            return "Failed to delete event";
+            return false;
         } catch (error) {
-            return error.message;
+            console.log(error.message);
+            return false;
         }
+
     }
 
     async registerVolunteer(eventId) {
