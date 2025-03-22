@@ -430,7 +430,7 @@ const ProfilePage = () => {
 									</div>
 								</section>
 							)}
-						</section>
+						</section >
 						<LocationEditorSection
 							user={profileData}
 							isEditing={isEditing}

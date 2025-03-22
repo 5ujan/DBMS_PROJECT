@@ -69,7 +69,7 @@ const updateProfile = async (req, res) => {
 				address,
 				location
 			} = req.body;
-			const {lat, lng} = location
+			const {lat:latitude, lng:longitude} = location
 			// Update organization profile
 			const updateOrganizationQuery = `
           UPDATE ORGANIZATION

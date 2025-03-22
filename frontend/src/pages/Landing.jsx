@@ -10,7 +10,7 @@ const Landing = () => {
       title: "Blood Donation Camp",
       description: "A successful blood donation drive that helped save hundreds of lives.",
       date: "2025-01-15",
-      image: "https://www.nidirect.gov.uk/sites/default/files/images/news/blood-donation.jpg",
+      image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8aomY0YGIKcG9RbJunEK8_cKJL040rdHuKg&s",
     },
     {
       id: 2,

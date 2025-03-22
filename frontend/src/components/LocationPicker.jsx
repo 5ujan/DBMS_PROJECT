@@ -136,7 +136,7 @@ const LocationEditorSection = ({isEditing, user, onLocationUpdate }) => {
   };
 
   return (
-    <section className="bg-gray-800 w-full rounded-xl pr-1 pb-1 text-white">
+    <section className="bg-gray-800 w-full mt-4 rounded-xl pr-1 pb-1 text-white">
       <div className="bg-gray-700 p-8 rounded-xl h-full shadow-xl">
         <div className="flex justify-between items-center">
           <h3 className="text-xl font-semibold text-white">Your Location</h3>
