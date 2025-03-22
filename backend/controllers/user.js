@@ -17,12 +17,14 @@ const updateProfile = async (req, res) => {
 				skills,
 				avatar,
 				created_at,
+				address,
+				location,
 			} = req.body;
-
+			const {lat:latitude, lng:longitude} =location
 			// Update volunteer profile
 			const updateVolunteerQuery = `
           UPDATE VOLUNTEER
-          SET name = ?, email = ?, phone = ?, gender = ?, dob = ?, avatar = ?, created_at = ?
+          SET name = ?, email = ?, phone = ?, gender = ?, dob = ?, avatar = ?, created_at = ?, latitude= ?, longitude=? , address=?
           WHERE volunteer_id = ?`;
 			await db.query(updateVolunteerQuery, [
 				name,
@@ -32,6 +34,7 @@ const updateProfile = async (req, res) => {
 				dob,
 				avatar,
 				created_at,
+				latitude, longitude, address,
 				req.user.id,
 			]);
 
@@ -63,12 +66,14 @@ const updateProfile = async (req, res) => {
 				avatar,
 				established_date,
 				contact_email,
+				address,
+				location
 			} = req.body;
-
+			const {lat, lng} = location
 			// Update organization profile
 			const updateOrganizationQuery = `
           UPDATE ORGANIZATION
-          SET organization_name = ?, email = ?, contact_phone = ?, avatar = ?, established_date = ?, contact_email = ?
+          SET organization_name = ?, email = ?, contact_phone = ?, avatar = ?, established_date = ?, contact_email = ?, latitude= ?, longitude=? , address=?
           WHERE organization_id = ?`;
 			await db.query(updateOrganizationQuery, [
 				organization_name,
@@ -77,6 +82,8 @@ const updateProfile = async (req, res) => {
 				avatar,
 				established_date,
 				contact_email,
+				latitude,
+				longitude, address,
 				req.user.id,
 			]);
 
@@ -108,7 +115,7 @@ const getData = async (req, res) => {
 		// Handle volunteer data
 		if (req.user.role === "volunteer") {
 			const volunteerQuery = `
-                SELECT volunteer_id AS id, name, email, dob, phone, gender, created_at, avatar
+                SELECT volunteer_id AS id, name, email, dob, phone, gender, created_at, avatar, latitude, longitude, address
                 FROM VOLUNTEER 
                 WHERE volunteer_id = ?`;
 
@@ -135,7 +142,7 @@ const getData = async (req, res) => {
 		// Handle organization data
 		if (req.user.role === "organization") {
 			const query = `
-                SELECT organization_id AS id, organization_name AS name, email,contact_email, established_date, avatar, contact_phone AS phone, created_at
+                SELECT organization_id AS id, organization_name AS name, email,contact_email, established_date, avatar, contact_phone AS phone, created_at, latitude, longitude, address
                 FROM ORGANIZATION 
                 WHERE organization_id = ?`;
 

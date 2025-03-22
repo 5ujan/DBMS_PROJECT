@@ -10,8 +10,8 @@ const db = require("../connectDB");
 
 // Register route for both volunteer and organization
 const register = async (req, res) => {
-    const { name, email, password, dob, role, phone, gender, organizationName, establishedDate, contactEmail, contactPhone } = req.body;
-    
+    const { name, email, password, dob, role, phone, gender, organizationName, establishedDate, contactEmail, contactPhone, location, address } = req.body;
+    console.log(location)
     try {
         // Validate input (Basic example, you can add more validation here)
         if (!email || !password || !role) {
@@ -24,10 +24,10 @@ const register = async (req, res) => {
         // Handle Volunteer registration
         if (role === 'individual') {
             const volunteerQuery = `
-                INSERT INTO VOLUNTEER (volunteer_id, email, password, name, dob, phone, gender) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)`;
+                INSERT INTO VOLUNTEER (volunteer_id, email, password, name, dob, phone, gender, latitude, longitude, address) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             
-            const [result] = await db.query(volunteerQuery, [id, email, hashedPassword, name, dob, phone, gender]);
+            const [result] = await db.query(volunteerQuery, [id, email, hashedPassword, name, dob, phone, gender, location?.lat||22.0, location?.lng||144.0, address]);
             
             const token = jwt.sign(
                 { id, role:"volunteer" },
@@ -43,10 +43,10 @@ const register = async (req, res) => {
         // Handle Organization registration
         else if (role === 'organization') {
             const orgQuery = `
-                INSERT INTO ORGANIZATION (organization_id, email, password, organization_name, established_date, contact_email, contact_phone) 
-                VALUES (?, ?, ?, ?, ?, ?, ?)`;
+                INSERT INTO ORGANIZATION (organization_id, email, password, organization_name, established_date, contact_email, contact_phone, latitude, longitude, address) 
+                VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?)`;
             
-            const [result] = await db.query(orgQuery, [id, email, hashedPassword, organizationName, establishedDate, contactEmail, contactPhone]);
+            const [result] = await db.query(orgQuery, [id, email, hashedPassword, organizationName, establishedDate, contactEmail, contactPhone, location?.latitude||22.0, location?.longitude||144.0, address]);
             
             const token = jwt.sign(
                 { id, role },

@@ -5,11 +5,11 @@ const { v4: uuidv4 } = require("uuid");
 exports.getAllEvents = async (req, res) => {
     try {
         const [events] = await db.query(`
-            SELECT 
-                p.programme_id, p.programme_name, p.description, p.start_date, p.end_date,p.image,
+              SELECT 
+                p.programme_id, p.programme_name, p.description, p.start_date, p.end_date, p.image, p.address, p.latitude, p.longitude,
                 o.organization_id, o.organization_name, o.contact_email, o.contact_phone
             FROM PROGRAMMES p
-            NATURAL JOIN ORGANIZATION o
+            LEFT JOIN ORGANIZATION o ON p.organization_id = o.organization_id
         `);
         console.log(events)
         res.json(events);
@@ -77,17 +77,17 @@ exports.createEvent = async (req, res) => {
     if (req.user.role !== "organization") {
         return res.status(403).json({ message: "Access denied" });
     }
-
-    const { programme_name, description, start_date, end_date, image } = req.body;
+    const { programme_name, description, start_date, end_date, image, location, address } = req.body;
     console.log(req.body)
+    const {lat:latitude, lng:longitude} = location;
     const programme_id = uuidv4();
     const organization_id = req.user.id;
 
     try {
         const [newEvent] = await db.query(`
-            INSERT INTO PROGRAMMES (programme_id, organization_id, programme_name, description, start_date, end_date, image) 
-            VALUES (?, ?, ?, ?, ?, ?,?)`, 
-            [programme_id, organization_id, programme_name, description, start_date, end_date, image]);
+            INSERT INTO PROGRAMMES (programme_id, organization_id, programme_name, description, start_date, end_date, image, latitude, longitude, address) 
+            VALUES (?, ?, ?, ?, ?, ?,?, ?, ?, ?)`, 
+            [programme_id, organization_id, programme_name, description, start_date, end_date, image, latitude  , longitude, address]);
 
         res.status(201).json({ message: "Event created successfully", event: newEvent });
     } catch (error) {
@@ -131,8 +131,10 @@ exports.updateEvent = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { programme_name, description, start_date, end_date, image} = req.body;
+    const { programme_name, description, start_date, end_date, image ,location, address} = req.body;
+    const {lat:latitude, lng:longitude} = location;
     const organization_id = req.user.id;
+    console.log(req.body, "req.body")
 
     try {
         // Check if event exists and belongs to the organization
@@ -147,9 +149,9 @@ exports.updateEvent = async (req, res) => {
         // Update the event
         const [updatedEvent] = await db.query(`
             UPDATE PROGRAMMES
-            SET programme_name = ?, description = ?, start_date = ?, end_date = ?, image = ?
+            SET programme_name = ?, description = ?, start_date = ?, end_date = ?, image = ?, address=?, latitude=?, longitude=?
             WHERE programme_id = ?`, 
-            [programme_name, description, start_date, end_date, image, id]);
+            [programme_name, description, start_date, end_date, image, address, latitude, longitude, id]);
 
         res.json({ message: "Event updated successfully", event: updatedEvent });
     } catch (error) {
