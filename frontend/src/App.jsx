@@ -4,7 +4,7 @@ import { AppProvider } from "./components/Context";
 import Signin from "./pages/Signin";
 import Home from "./pages/Home";
 import Error from "./pages/Error";
-import Landing from "./pages/Landing";
+import LandingPage from "./pages/Landing";
 import Profile from "./pages/Profile";
 import Events from "./pages/Events";
 import AdminVolunteers from "./pages/Admin/Volunteers";
@@ -47,7 +47,7 @@ function App() {
       <Router>
         <Routes>
           {/* Public Routes (Only Landing and Signin) */}
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/signin" element={<Signin />} />
 
           {/* Protected Routes (Only logged-in users) */}
