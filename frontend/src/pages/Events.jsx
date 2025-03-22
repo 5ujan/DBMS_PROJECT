@@ -333,8 +333,8 @@ export const EventModal = ({ event, onClose, user, navigate, onEdit, onDelete })
         </div>
 
         {/* Scrollable content */}
-        <div className="flex-1 overflow-y-auto p-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="flex-1 overflow-y-auto p-4 ">
+          <div className="grid grid-cols-1 md:grid-cols-2 mb-3 gap-6">
             {/* Left column: Image and event details */}
             <div>
               {event?.image && (

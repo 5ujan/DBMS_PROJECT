@@ -373,7 +373,10 @@ class ApiServices {
         try {
             const { data, status } = await this.api.get("/admin/organization");
             if (status === 200) {
-                return data;
+                const formattedData = data.map((event) => {
+                    return {...event, location: {lat:event?.latitude,lng:event?.longitude}}
+                })
+                return formattedData
             }
             return "Failed to fetch organizations";
         } catch (error) {
@@ -384,7 +387,10 @@ class ApiServices {
         try {
             const { data, status } = await this.api.get("/admin/volunteer");
             if (status === 200) {
-                return data;
+                    const formattedData = data.map((event) => {
+                        return {...event, location: {lat:event?.latitude,lng:event?.longitude}}
+                    })
+                    return formattedData
             }
             return "Failed to fetch volunteers";
         } catch (error) {
@@ -395,7 +401,10 @@ class ApiServices {
         try {
             const { data, status } = await this.api.get("/admin/event");
             if (status === 200) {
-                return data;
+                const formattedData = data.map((event) => {
+                    return {...event, location: {lat:event?.latitude,lng:event?.longitude}}
+                })
+                return formattedData
             }
             return "Failed to fetch events";
         } catch (error) {

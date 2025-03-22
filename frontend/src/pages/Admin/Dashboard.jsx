@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { IoIosArrowBack } from "react-icons/io";
-import { FaUserFriends, FaBuilding, FaCalendarAlt, FaChartLine } from "react-icons/fa";
+import { FaUserFriends, FaBuilding, FaCalendarAlt, FaChartLine, FaMapMarkedAlt, FaFilter } from "react-icons/fa";
 import ApiServices from "../../frontend-lib/api/ApiServices";
 
 const Dashboard = () => {
@@ -11,15 +11,65 @@ const Dashboard = () => {
     events: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
-
+  const [volunteerLocations, setVolunteerLocations] = useState([]);
+  const [organizationLocations, setOrganizationLocations] = useState([]);
+  const [eventLocations, setEventLocations] = useState([]);
+  const [mapLoaded, setMapLoaded] = useState(false);
+  const [viewMode, setViewMode] = useState("all"); // "all", "volunteers", "organizations", "events"
+  const mapRef = useRef(null);
+  const mapInstanceRef = useRef(null);
+  const markersLayerRef = useRef(null);
+  
   useEffect(() => {
     const fetchCounts = async () => {
       setIsLoading(true);
       try {
         const data = await ApiServices.adminGetStats();
         setStats(data);
+        
+        // Fetch volunteer locations
+        const volunteers = await ApiServices.adminGetAllVolunteers();
+        const validVolunteerLocations = volunteers
+          .filter(volunteer => volunteer.location && volunteer.location.lat && volunteer.location.lng)
+          .map(volunteer => ({
+            ...volunteer.location,
+            type: 'volunteer',
+            name: volunteer.name || 'Volunteer',
+            id: volunteer.id,
+            email: volunteer.email,
+            phone: volunteer.phone
+          }));
+        setVolunteerLocations(validVolunteerLocations);
+        
+        // Fetch organization locations
+        const organizations = await ApiServices.adminGetAllOrganizations();
+        const validOrganizationLocations = organizations
+          .filter(org => org.location && org.location.lat && org.location.lng)
+          .map(org => ({
+            ...org.location,
+            type: 'organization',
+            name: org.name || 'Organization',
+            id: org.id,
+            address: org.address,
+            contactPerson: org.contactPerson
+          }));
+        setOrganizationLocations(validOrganizationLocations);
+        
+        // Fetch event locations
+        const events = await ApiServices.adminGetAllEvents();
+        const validEventLocations = events
+          .filter(event => event.location && event.location.lat && event.location.lng)
+          .map(event => ({
+            ...event.location,
+            type: 'event',
+            name: event.title || 'Event',
+            id: event.id,
+            description: event.description,
+            date: event.date
+          }));
+        setEventLocations(validEventLocations);
       } catch (error) {
-        console.error("Error fetching stats:", error);
+        console.error("Error fetching data:", error);
       } finally {
         setIsLoading(false);
       }
@@ -27,6 +77,186 @@ const Dashboard = () => {
 
     fetchCounts();
   }, []);
+
+  // Load Leaflet scripts
+  useEffect(() => {
+    if (!mapLoaded) {
+      // Load Leaflet CSS if not already loaded
+      if (!document.querySelector('link[href*="leaflet.css"]')) {
+        const linkEl = document.createElement("link");
+        linkEl.rel = "stylesheet";
+        linkEl.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
+        linkEl.integrity = "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=";
+        linkEl.crossOrigin = "";
+        document.head.appendChild(linkEl);
+      }
+
+      // Load Leaflet JS if not already loaded
+      if (!window.L) {
+        const scriptEl = document.createElement("script");
+        scriptEl.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+        scriptEl.integrity = "sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=";
+        scriptEl.crossOrigin = "";
+        scriptEl.onload = () => {
+          setMapLoaded(true);
+        };
+        document.head.appendChild(scriptEl);
+      } else {
+        setMapLoaded(true);
+      }
+    }
+  }, []);
+
+  // Initialize map when data is loaded and Leaflet is ready
+  useEffect(() => {
+    if (mapLoaded && mapRef.current && !mapRef.current._leaflet_id) {
+      const L = window.L;
+      
+      // Default center if no locations
+      let mapCenter = [27.7172, 85.3240]; // Default coordinates
+      let zoomLevel = 10;
+      
+      // Initialize the map
+      const map = L.map(mapRef.current).setView(mapCenter, zoomLevel);
+      mapInstanceRef.current = map;
+      
+      // Add OpenStreetMap tiles
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+      
+      // Create markers layer group
+      const markersLayer = L.layerGroup().addTo(map);
+      markersLayerRef.current = markersLayer;
+      
+      // Add legend
+      const legend = L.control({ position: 'bottomright' });
+      legend.onAdd = function() {
+        const div = L.DomUtil.create('div', 'info legend');
+        div.innerHTML = `
+          <div style="background-color: rgba(0,0,0,0.7); color: white; padding: 10px; border-radius: 5px; font-size: 12px;">
+            <div style="margin-bottom: 5px; display: flex; align-items: center;">
+              <div style="width: 20px; height: 20px; border-radius: 50%; background-color: #3b82f6; margin-right: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">V</div>
+              <span>Volunteers</span>
+            </div>
+            <div style="margin-bottom: 5px; display: flex; align-items: center;">
+              <div style="width: 20px; height: 20px; border-radius: 50%; background-color: #10b981; margin-right: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">O</div>
+              <span>Organizations</span>
+            </div>
+            <div style="display: flex; align-items: center;">
+              <div style="width: 20px; height: 20px; border-radius: 50%; background-color: #8b5cf6; margin-right: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">E</div>
+              <span>Events</span>
+            </div>
+          </div>
+        `;
+        return div;
+      };
+      legend.addTo(map);
+      
+      // Trigger a resize after a short delay to ensure proper map rendering
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 100);
+    }
+  }, [mapLoaded]);
+
+  // Update markers based on viewMode
+  useEffect(() => {
+    if (!mapInstanceRef.current || !markersLayerRef.current || !mapLoaded) return;
+    
+    const L = window.L;
+    const map = mapInstanceRef.current;
+    const markersLayer = markersLayerRef.current;
+    
+    // Clear all existing markers
+    markersLayer.clearLayers();
+    
+    // Determine which location sets to show based on viewMode
+    let locationsToShow = [];
+    if (viewMode === 'all' || viewMode === 'volunteers') {
+      locationsToShow = [...locationsToShow, ...volunteerLocations];
+    }
+    if (viewMode === 'all' || viewMode === 'organizations') {
+      locationsToShow = [...locationsToShow, ...organizationLocations];
+    }
+    if (viewMode === 'all' || viewMode === 'events') {
+      locationsToShow = [...locationsToShow, ...eventLocations];
+    }
+    
+    // Don't proceed if no locations to show
+    if (locationsToShow.length === 0) return;
+    
+    // Create improved markers
+    locationsToShow.forEach(loc => {
+      let markerHtml = '';
+      let popupContent = '';
+      
+      if (loc.type === 'volunteer') {
+        markerHtml = `
+          <div style="width: 28px; height: 28px; border-radius: 50%; background-color: #3b82f6; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+            V
+          </div>
+        `;
+        popupContent = `
+          <div style="min-width: 180px;">
+            <h3 style="font-weight: bold; margin-bottom: 5px;">${loc.name}</h3>
+            <p style="margin: 0; padding: 0; color: #3b82f6; font-weight: 500;">Volunteer</p>
+            ${loc.email ? `<p style="margin: 5px 0;">Email: ${loc.email}</p>` : ''}
+            ${loc.phone ? `<p style="margin: 5px 0;">Phone: ${loc.phone}</p>` : ''}
+          </div>
+        `;
+      } else if (loc.type === 'organization') {
+        markerHtml = `
+          <div style="width: 28px; height: 28px; border-radius: 50%; background-color: #10b981; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+            O
+          </div>
+        `;
+        popupContent = `
+          <div style="min-width: 180px;">
+            <h3 style="font-weight: bold; margin-bottom: 5px;">${loc.name}</h3>
+            <p style="margin: 0; padding: 0; color: #10b981; font-weight: 500;">Organization</p>
+            ${loc.address ? `<p style="margin: 5px 0;">Address: ${loc.address}</p>` : ''}
+            ${loc.contactPerson ? `<p style="margin: 5px 0;">Contact: ${loc.contactPerson}</p>` : ''}
+          </div>
+        `;
+      } else if (loc.type === 'event') {
+        markerHtml = `
+          <div style="width: 28px; height: 28px; border-radius: 50%; background-color: #8b5cf6; border: 2px solid white; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">
+            E
+          </div>
+        `;
+        popupContent = `
+          <div style="min-width: 180px;">
+            <h3 style="font-weight: bold; margin-bottom: 5px;">${loc.name}</h3>
+            <p style="margin: 0; padding: 0; color: #8b5cf6; font-weight: 500;">Event</p>
+            ${loc.date ? `<p style="margin: 5px 0;">Date: ${new Date(loc.date).toLocaleDateString()}</p>` : ''}
+            ${loc.description ? `<p style="margin: 5px 0;">${loc.description.substring(0, 100)}${loc.description.length > 100 ? '...' : ''}</p>` : ''}
+          </div>
+        `;
+      }
+      
+      if (markerHtml) {
+        const icon = L.divIcon({
+          className: 'custom-div-icon',
+          html: markerHtml,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14]
+        });
+        
+        const marker = L.marker([loc.lat, loc.lng], { icon }).addTo(markersLayer);
+        marker.bindPopup(popupContent);
+      }
+    });
+    
+    // Fit map to show all visible markers with padding
+    if (locationsToShow.length > 0) {
+      const bounds = [];
+      locationsToShow.forEach(loc => {
+        bounds.push([loc.lat, loc.lng]);
+      });
+      map.fitBounds(bounds, { padding: [30, 30] });
+    }
+  }, [viewMode, volunteerLocations, organizationLocations, eventLocations, mapLoaded]);
 
   const cards = [
     {
@@ -53,6 +283,13 @@ const Dashboard = () => {
       link: "/admin/events",
       buttonText: "Manage Events",
     },
+  ];
+
+  const viewModes = [
+    { id: "all", label: "All Data", count: volunteerLocations.length + organizationLocations.length + eventLocations.length },
+    { id: "volunteers", label: "Volunteers", count: volunteerLocations.length },
+    { id: "organizations", label: "Organizations", count: organizationLocations.length },
+    { id: "events", label: "Events", count: eventLocations.length },
   ];
 
   return (
@@ -107,7 +344,69 @@ const Dashboard = () => {
           ))}
         </div>
 
-        {/* Recent Activity or Additional Content */}
+        {/* Map Section */}
+        <div className="bg-gray-800 rounded-lg shadow-lg overflow-hidden mb-8">
+          <div className="p-6 text-white">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <FaMapMarkedAlt className="text-white" />
+                  <h2 className="text-xl font-bold">Location Overview</h2>
+                </div>
+                <p className="text-gray-400 text-sm mt-1">
+                  {viewMode === "all" ? 
+                    `Showing ${volunteerLocations.length} volunteers, ${organizationLocations.length} organizations, and ${eventLocations.length} events`
+                    : viewMode === "volunteers" ? 
+                    `Showing ${volunteerLocations.length} volunteers`
+                    : viewMode === "organizations" ?
+                    `Showing ${organizationLocations.length} organizations`
+                    : `Showing ${eventLocations.length} events`
+                  }
+                </p>
+              </div>
+              
+              {/* View Mode Filter */}
+              <div className="flex gap-2 items-center">
+                <FaFilter className="text-gray-400" />
+                <div className="flex bg-gray-700 rounded-lg overflow-hidden">
+                  {viewModes.map((mode) => (
+                    <button
+                      key={mode.id}
+                      onClick={() => setViewMode(mode.id)}
+                      className={`px-3 py-2 text-sm font-medium transition-colors ${
+                        viewMode === mode.id
+                          ? "bg-gray-600 text-white"
+                          : "text-gray-300 hover:bg-gray-600 hover:text-white"
+                      }`}
+                    >
+                      {mode.label} ({mode.count})
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            {/* Map Container */}
+            <div 
+              ref={mapRef}
+              className="w-full h-96 bg-gray-700 rounded-lg overflow-hidden"
+            >
+              {!mapLoaded || (
+                volunteerLocations.length === 0 && 
+                organizationLocations.length === 0 && 
+                eventLocations.length === 0
+              ) ? (
+                <div className="h-full w-full flex items-center justify-center bg-gray-700">
+                  {isLoading ? (
+                    <div className="text-gray-400">Loading map data...</div>
+                  ) : (
+                    <div className="text-gray-400">No location data available</div>
+                  )}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
