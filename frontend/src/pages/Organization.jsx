@@ -14,14 +14,14 @@ const Organization = () => {
 		avatar: "",
 		created_at: "",
 	});
-	const [imagePreview, setImagePreview] = useState(null);
-	const [loading, setLoading] = useState(true);
-	const { user, setUser } = useStore();
-	const navigate = useNavigate();
-	const [organizationId, setOrganizationId] = useState(null);
-	const [events, setEvents] = useState([]);
+	const [imgPreview, setImagePreview] = useState(null);
+	const [load, setLoading] = useState(true);
+	const { user: userID, setUser } = useStore();
+	const navigateVar = useNavigate();
+	const [organizationIdx, setOrganizationId] = useState(null);
+	const [event, setEvents] = useState([]);
 	const [donateOpen, setDonateOpen] = useState(false);
-	const [donateAmount, setDonateAmount] = useState(0);
+	const [donationAmount, setDonateAmount] = useState(0);
     const [donations, setDonations] = useState([]);
 	useEffect(() => {
 		const pathParts = window.location.pathname.split("/");
@@ -32,15 +32,15 @@ const Organization = () => {
 	useEffect(() => {
 		const fetchOrganizationProfile = async () => {
 			try {
-				if (organizationId) {
+				if (organizationIdx) {
 					const data = await ApiServices.getOrganizationById(
-						organizationId
+						organizationIdx
 					);
 					const events = await ApiServices.getEventsByOrganization(
-						organizationId
+						organizationIdx
 					);
                     const d = await ApiServices.getDonationsByOrganization(
-                        organizationId )
+                        organizationIdx )
                         setDonations(d)
 					setOrganizationData(data[0]);
 
@@ -53,7 +53,7 @@ const Organization = () => {
 			}
 		};
 		fetchOrganizationProfile();
-	}, [organizationId]);
+	}, [organizationIdx]);
 	// console.log(organizationData)
 	const eventCard = (event) => {
 		return (
@@ -70,7 +70,7 @@ const Organization = () => {
 	return (
 		<div className="bg-black w-full">
 			<Navbar />
-			{!loading && (
+			{!load && (
 				<div className="text-white min-h-screen w-full flex items-start justify-start px-10">
 					<div className="container p-6 w-full">
 						<div className="w-full flex flex-row justify-between">
@@ -92,9 +92,9 @@ const Organization = () => {
 										<div className="flex flex-col items-center mb-6 md:mb-0">
 											<div className="relative">
 												<div className="w-40 h-40 rounded-full bg-gray-500 overflow-hidden">
-													{imagePreview ? (
+													{imgPreview ? (
 														<img
-															src={imagePreview}
+															src={imgPreview}
 															alt="Profile"
 															className="w-full h-full object-cover"
 														/>
@@ -154,9 +154,9 @@ const Organization = () => {
 										<h3 className="text-xl font-semibold text-green-500">
 											Organized Events
 										</h3>
-										{events && (
+										{event && (
 											<div className="mt-4 flex flex-col gap-3">
-												{events
+												{event
 													.slice(0, 4)
 													.map(eventCard)}
 											</div>
@@ -205,10 +205,10 @@ const Organization = () => {
 			)}
 			{donateOpen && (
 				<DonateModal
-                    organizationId = {organizationId}
+                    organizationId = {organizationIdx}
 					open={donateOpen}
 					onClose={() => setDonateOpen(false)}
-					donateAmount={donateAmount}
+					donateAmount={donationAmount}
 					setDonateAmount={setDonateAmount}
 				/>
 			)}
