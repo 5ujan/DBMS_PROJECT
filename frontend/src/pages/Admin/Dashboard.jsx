@@ -10,12 +10,12 @@ const Dashboard = () => {
     organizations: 0,
     events: 0,
   });
-  const [isLoading, setIsLoading] = useState(true);
-  const [volunteerLocations, setVolunteerLocations] = useState([]);
-  const [organizationLocations, setOrganizationLocations] = useState([]);
-  const [eventLocations, setEventLocations] = useState([]);
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [viewMode, setViewMode] = useState("all"); // "all", "volunteers", "organizations", "events"
+  const [isLoadingVar, setIsLoading] = useState(true);
+  const [volunteerLocation, setVolunteerLocations] = useState([]);
+  const [organizationLocation, setOrganizationLocations] = useState([]);
+  const [eventLocation, setEventLocations] = useState([]);
+  const [mapLoadedBool, setMapLoaded] = useState(false);
+  const [viewModevar, setViewMode] = useState("all"); // "all", "volunteers", "organizations", "events"
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersLayerRef = useRef(null);
@@ -80,7 +80,7 @@ const Dashboard = () => {
 
   // Load Leaflet scripts
   useEffect(() => {
-    if (!mapLoaded) {
+    if (!mapLoadedBool) {
       // Load Leaflet CSS if not already loaded
       if (!document.querySelector('link[href*="leaflet.css"]')) {
         const linkEl = document.createElement("link");
@@ -109,7 +109,7 @@ const Dashboard = () => {
 
   // Initialize map when data is loaded and Leaflet is ready
   useEffect(() => {
-    if (mapLoaded && mapRef.current && !mapRef.current._leaflet_id) {
+    if (mapLoadedBool && mapRef.current && !mapRef.current._leaflet_id) {
       const L = window.L;
       
       // Default center if no locations
@@ -158,11 +158,11 @@ const Dashboard = () => {
         map.invalidateSize();
       }, 100);
     }
-  }, [mapLoaded]);
+  }, [mapLoadedBool]);
 
   // Update markers based on viewMode
   useEffect(() => {
-    if (!mapInstanceRef.current || !markersLayerRef.current || !mapLoaded) return;
+    if (!mapInstanceRef.current || !markersLayerRef.current || !mapLoadedBool) return;
     
     const L = window.L;
     const map = mapInstanceRef.current;
@@ -173,14 +173,14 @@ const Dashboard = () => {
     
     // Determine which location sets to show based on viewMode
     let locationsToShow = [];
-    if (viewMode === 'all' || viewMode === 'volunteers') {
-      locationsToShow = [...locationsToShow, ...volunteerLocations];
+    if (viewModevar === 'all' || viewModevar === 'volunteers') {
+      locationsToShow = [...locationsToShow, ...volunteerLocation];
     }
-    if (viewMode === 'all' || viewMode === 'organizations') {
-      locationsToShow = [...locationsToShow, ...organizationLocations];
+    if (viewModevar === 'all' || viewModevar === 'organizations') {
+      locationsToShow = [...locationsToShow, ...organizationLocation];
     }
-    if (viewMode === 'all' || viewMode === 'events') {
-      locationsToShow = [...locationsToShow, ...eventLocations];
+    if (viewModevar === 'all' || viewModevar === 'events') {
+      locationsToShow = [...locationsToShow, ...eventLocation];
     }
     
     // Don't proceed if no locations to show
@@ -236,14 +236,14 @@ const Dashboard = () => {
       }
       
       if (markerHtml) {
-        const icon = L.divIcon({
+        const iconVar = L.divIcon({
           className: 'custom-div-icon',
           html: markerHtml,
           iconSize: [28, 28],
           iconAnchor: [14, 14]
         });
         
-        const marker = L.marker([loc.lat, loc.lng], { icon }).addTo(markersLayer);
+        const marker = L.marker([loc.lat, loc.lng], { icon: iconVar }).addTo(markersLayer);
         marker.bindPopup(popupContent);
       }
     });
@@ -256,9 +256,9 @@ const Dashboard = () => {
       });
       map.fitBounds(bounds, { padding: [30, 30] });
     }
-  }, [viewMode, volunteerLocations, organizationLocations, eventLocations, mapLoaded]);
+  }, [viewModevar, volunteerLocation, organizationLocation, eventLocation, mapLoadedBool]);
 
-  const cards = [
+  const card = [
     {
       title: "Volunteers",
       count: stats.volunteers,
@@ -286,10 +286,10 @@ const Dashboard = () => {
   ];
 
   const viewModes = [
-    { id: "all", label: "All Data", count: volunteerLocations.length + organizationLocations.length + eventLocations.length },
-    { id: "volunteers", label: "Volunteers", count: volunteerLocations.length },
-    { id: "organizations", label: "Organizations", count: organizationLocations.length },
-    { id: "events", label: "Events", count: eventLocations.length },
+    { id: "all", label: "All Data", count: volunteerLocation.length + organizationLocation.length + eventLocation.length },
+    { id: "volunteers", label: "Volunteers", count: volunteerLocation.length },
+    { id: "organizations", label: "Organizations", count: organizationLocation.length },
+    { id: "events", label: "Events", count: eventLocation.length },
   ];
 
   return (
@@ -314,7 +314,7 @@ const Dashboard = () => {
 
         {/* Status Cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          {cards.map((card, index) => (
+          {card.map((card, index) => (
             <div
               key={index}
               className={`${card.color} rounded-lg shadow-lg overflow-hidden`}
@@ -323,7 +323,7 @@ const Dashboard = () => {
                 <div className="flex justify-between items-center mb-4">
                   <div className="flex flex-col">
                     <p className="text-lg font-medium opacity-90">{card.title}</p>
-                    {isLoading ? (
+                    {isLoadingVar ? (
                       <div className="h-8 w-12 bg-white/20 animate-pulse rounded mt-1"></div>
                     ) : (
                       <h2 className="text-3xl font-bold">{card.count}</h2>
@@ -354,13 +354,13 @@ const Dashboard = () => {
                   <h2 className="text-xl font-bold">Location Overview</h2>
                 </div>
                 <p className="text-gray-400 text-sm mt-1">
-                  {viewMode === "all" ? 
-                    `Showing ${volunteerLocations.length} volunteers, ${organizationLocations.length} organizations, and ${eventLocations.length} events`
-                    : viewMode === "volunteers" ? 
-                    `Showing ${volunteerLocations.length} volunteers`
-                    : viewMode === "organizations" ?
-                    `Showing ${organizationLocations.length} organizations`
-                    : `Showing ${eventLocations.length} events`
+                  {viewModevar === "all" ? 
+                    `Showing ${volunteerLocation.length} volunteers, ${organizationLocation.length} organizations, and ${eventLocation.length} events`
+                    : viewModevar === "volunteers" ? 
+                    `Showing ${volunteerLocation.length} volunteers`
+                    : viewModevar === "organizations" ?
+                    `Showing ${organizationLocation.length} organizations`
+                    : `Showing ${eventLocation.length} events`
                   }
                 </p>
               </div>
@@ -374,7 +374,7 @@ const Dashboard = () => {
                       key={mode.id}
                       onClick={() => setViewMode(mode.id)}
                       className={`px-3 py-2 text-sm font-medium transition-colors ${
-                        viewMode === mode.id
+                        viewModevar === mode.id
                           ? "bg-gray-600 text-white"
                           : "text-gray-300 hover:bg-gray-600 hover:text-white"
                       }`}
@@ -391,13 +391,13 @@ const Dashboard = () => {
               ref={mapRef}
               className="w-full h-96 bg-gray-700 rounded-lg overflow-hidden"
             >
-              {!mapLoaded || (
-                volunteerLocations.length === 0 && 
-                organizationLocations.length === 0 && 
-                eventLocations.length === 0
+              {!mapLoadedBool || (
+                volunteerLocation.length === 0 && 
+                organizationLocation.length === 0 && 
+                eventLocation.length === 0
               ) ? (
                 <div className="h-full w-full flex items-center justify-center bg-gray-700">
-                  {isLoading ? (
+                  {isLoadingVar ? (
                     <div className="text-gray-400">Loading map data...</div>
                   ) : (
                     <div className="text-gray-400">No location data available</div>
