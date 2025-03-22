@@ -43,7 +43,7 @@ npm run dev
 Ensure `nginx.conf` is properly set up and restart Nginx if needed:
 ```sh
 sudo systemctl restart nginx
-```
+```  
 
 The application should now be accessible in your browser. 🚀
 
