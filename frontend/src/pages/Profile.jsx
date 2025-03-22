@@ -4,6 +4,7 @@ import { useStore } from "../store/store";
 import ApiServices from "../frontend-lib/api/ApiServices";
 import { FiEdit, FiSave, FiTrash, FiUpload, FiXCircle } from "react-icons/fi";
 import Navbar from "../components/Nav";
+import LocationEditorSection from "../components/LocationPicker";
 
 const ProfilePage = () => {
 	const [profileData, setProfileData] = useState({
@@ -33,7 +34,7 @@ const ProfilePage = () => {
 				const d = await ApiServices.getDonationsByOrganization(
 					data?.id
 				);
-				console.log(d)
+				console.log(d);
 				setDonations(d);
 				setAvailableSkills(skills);
 				setEvents(events);
@@ -89,6 +90,10 @@ const ProfilePage = () => {
 		}));
 	};
 
+	const handleLocationUpdate = () => {
+		console.log("log");
+	};
+
 	const handleSaveChanges = async () => {
 		try {
 			// Construct profile data JSON
@@ -105,7 +110,8 @@ const ProfilePage = () => {
 				...user,
 				...profileData,
 			});
-			// setProfileData(updatedProfile);
+			setProfileData(updatedProfile);
+			console.log(profileData)
 			setIsEditing(false);
 		} catch (error) {
 			console.error("Error saving changes:", error);
@@ -183,12 +189,15 @@ const ProfilePage = () => {
 										<div className="md:ml-8 w-full">
 											{Object.entries(profileData).map(
 												([key, value]) => {
+													console.log({value})
 													if (
 														[
 															"id",
 															"role",
 															"avatar",
 															"skills",
+															"address",
+															"location",
 														].includes(key)
 													)
 														return null;
@@ -245,7 +254,7 @@ const ProfilePage = () => {
 																	className="w-full p-3 border border-gray-300 rounded-md bg-gray-600 text-white"
 																/>
 															) : (
-																<p className="text-xl">
+																<p className="text-xl break-all">
 																	{new Date(
 																		value
 																	) instanceof
@@ -375,46 +384,64 @@ const ProfilePage = () => {
 												</div>
 											)}
 										</div>
-									<div className="mt-6">
-										<h3 className="text-xl font-semibold text-white">
-											Donations
-										</h3>
-										{donations && donations.length > 0 ? (
-											<div className="mt-4 flex flex-col gap-3">
-												{donations
-													.slice(0, 4)
-													.map((donation, index) => (
-														<div
-															key={index}
-															className="bg-gray-800 p-4 rounded-lg"
-														>
-															<h4 className="text-lg font-semibold">
-																{
-																	donation.donor_name
-																}
-															</h4>
-															<p className="text-sm">
-																{donation.amount
-																	? `$${donation.amount}`
-																	: "Amount not available"}
-															</p>
-															<p className="text-sm">
-																{donation.date}
-															</p>
-														</div>
-													))}
-											</div>
-										) : (
-											<p className="mt-2 text-gray-400">
-												No donations available
-											</p>
-										)}
+										<div className="mt-6">
+											<h3 className="text-xl font-semibold text-white">
+												Donations
+											</h3>
+											{donations &&
+											donations.length > 0 ? (
+												<div className="mt-4 flex flex-col gap-3">
+													{donations
+														.slice(0, 4)
+														.map(
+															(
+																donation,
+																index
+															) => (
+																<div
+																	key={index}
+																	className="bg-gray-800 p-4 rounded-lg"
+																>
+																	<h4 className="text-lg font-semibold">
+																		{
+																			donation.donor_name
+																		}
+																	</h4>
+																	<p className="text-sm">
+																		{donation.amount
+																			? `$${donation.amount}`
+																			: "Amount not available"}
+																	</p>
+																	<p className="text-sm">
+																		{
+																			donation.date
+																		}
+																	</p>
+																</div>
+															)
+														)}
+												</div>
+											) : (
+												<p className="mt-2 text-gray-400">
+													No donations available
+												</p>
+											)}
+										</div>
 									</div>
-									</div>
-
 								</section>
 							)}
 						</section>
+						<LocationEditorSection
+							user={profileData}
+							isEditing={isEditing}
+							onLocationUpdate={({ location, address }) =>
+								setProfileData((prev) => ({
+									...prev,
+									location,
+									address,
+								}))
+							}
+						></LocationEditorSection>
 
 						{/* Edit and Save Buttons */}
 						<div className="flex items-center justify-between mt-6">

@@ -61,7 +61,7 @@ class ApiServices {
                 const { data, status } = await this.api.get("/user");
                 // console.log({data})
                 if (status === 200) {
-                    return data;
+                    return {...data, location: {lat: data?.latitude, lng: data?.longitude}};
                 }
                 return "Failed to fetch user data";
             }
@@ -79,7 +79,9 @@ class ApiServices {
           console.log({formattedPayload})
           const { data, status } = await this.api.post("/user", formattedPayload);
           console.log({data})
-          return { data, status };
+          if(status===200){
+              return data;
+            }
         } catch (error) {
           console.error("Error updating user data:", error);
           return false;
@@ -97,6 +99,8 @@ class ApiServices {
             dob: payload.dob.split("T")[0],
             skills: payload.skills || [],
             avatar: payload.avatar,
+            location: payload?.location,
+            address: payload?.address,
             created_at: payload.created_at.split("T")[0],
 
           };
@@ -108,6 +112,8 @@ class ApiServices {
             contact_phone: payload.phone,
             contact_email: payload.email,
             avatar: payload.avatar,
+            address: payload?.address,
+            location: payload?.location,
             created_at: payload.created_at?.split("T")[0],
             established_date: payload.established_date.split("T")[0],
           };
@@ -122,7 +128,10 @@ class ApiServices {
         try {
             const { data, status } = await this.api.get("/event");
             if (status === 200) {
-                return data;
+                const formattedData = data.map((event) => {
+                    return {...event, location: {lat:event?.latitude,lng:event?.longitude}}
+                })
+                return formattedData
             }
             return "Failed to fetch events";
         } catch (error) {

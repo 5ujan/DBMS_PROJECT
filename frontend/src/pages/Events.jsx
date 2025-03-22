@@ -4,6 +4,7 @@ import Navbar from '../components/Nav';
 import { useStore } from '../store/store';
 import ApiServices from '../frontend-lib/api/ApiServices';
 import { showToast } from '../utils/toasts';
+import LocationEditorSection from '../components/LocationPicker';
 
 const Events = () => {
   const [events, setEvents] = useState([]);
@@ -27,6 +28,7 @@ const Events = () => {
     setLoading(true);
     try {
       const response = await ApiServices.getAllEvents(); // Use the ApiServices method
+      console.log(response)
       setEvents(response);
       setFilteredEvents(response);
     } catch (error) {
@@ -105,6 +107,7 @@ const Events = () => {
       console.log("not a file");
     }
     try {
+      console.log(eventData)
       await ApiServices.createEvent(eventData);
       // After successful creation, fetch events again and close the modal
       await fetchEvents();
@@ -307,7 +310,7 @@ export const EventModal = ({ event, onClose, user, navigate, onEdit }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+    <div className="fixed inset-0  max-h-90% overflow-auto scrollbar-hide bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
       <div className="bg-gray-800 rounded-lg w-full max-w-4xl h-auto max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header with close button */}
         <div className="p-4 border-b border-gray-700 flex justify-between items-center sticky top-0 bg-gray-800 z-10">
@@ -413,6 +416,7 @@ export const EventModal = ({ event, onClose, user, navigate, onEdit }) => {
               )}
             </div>
           </div>
+          <LocationEditorSection user={event} isEditing={false} handleLocationUpdate={()=>{}}></LocationEditorSection>
         </div>
       </div>
     </div>
@@ -423,6 +427,9 @@ export const EditEventModal = ({ event,setEventData, onClose, onEdit }) => {
   
   const handleInputChange = (e) => {
     setEventData({ ...event, [e.target.name]: e.target.value });
+  };
+ const  handleLocationUpdate = ({ location, address }) => {
+    setEventData({ ...event, location, address });
   };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -436,7 +443,7 @@ export const EditEventModal = ({ event,setEventData, onClose, onEdit }) => {
     }
   };
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50  max-h-90% overflow-auto scrollbar-hide flex justify-center items-center z-50">
       <div className="bg-gray-800 p-6 rounded-lg w-2/3">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold">Edit Event</h2>
@@ -487,6 +494,8 @@ export const EditEventModal = ({ event,setEventData, onClose, onEdit }) => {
             </div>
           )}
         </div>
+          <LocationEditorSection isEditing={true} user={event} onLocationUpdate={handleLocationUpdate}></LocationEditorSection>
+
         <div className="flex justify-end">
           <button onClick={onClose} className="bg-gray-500 text-white px-4 py-2 rounded-md mr-4">
             Cancel
@@ -503,9 +512,14 @@ export const EditEventModal = ({ event,setEventData, onClose, onEdit }) => {
 const CreateEventModal = ({ eventData, setEventData, onClose, onCreate }) => {
 
   const [imagePreview, setImagePreview] = useState(eventData.image || null);
+  const [isEditingLocation, setIsEditingLocation] = useState(true);
+
 
   const handleInputChange = (e) => {
     setEventData({ ...eventData, [e.target.name]: e.target.value });
+  };
+  const  handleLocationUpdate = ({ location, address }) => {
+    setEventData({ ...eventData, location, address });
   };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -520,8 +534,8 @@ const CreateEventModal = ({ eventData, setEventData, onClose, onCreate }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-gray-800 p-6 rounded-lg w-2/3">
+    <div className="absolute top-0 py-10 w-full bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-gray-800 overflow-auto max-h-[90vh] scrollbar-hide p-6 rounded-lg w-2/3">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold text-white">Create New Event</h2>
           <button onClick={onClose} className="text-white text-lg font-bold">X</button>
@@ -576,6 +590,11 @@ const CreateEventModal = ({ eventData, setEventData, onClose, onCreate }) => {
             </div>
           )}
         </div>
+        <LocationEditorSection 
+            isEditing={isEditingLocation} 
+            user={{...eventData, location:{lat:27.6630019,lng:85.2774207}}}
+            onLocationUpdate={handleLocationUpdate} 
+          />
         <div className="flex justify-end">
           <button onClick={onClose} className="bg-gray-500 text-white px-4 py-2 rounded-md mr-4">
             Cancel
