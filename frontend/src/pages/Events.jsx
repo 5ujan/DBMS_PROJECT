@@ -5,6 +5,7 @@ import { useStore } from '../store/store';
 import ApiServices from '../frontend-lib/api/ApiServices';
 import { showToast } from '../utils/toasts';
 import LocationEditorSection from '../components/LocationPicker';
+import { FaTrashAlt } from 'react-icons/fa';
 
 const Events = () => {
   const [events, setEvents] = useState([]);
@@ -137,7 +138,15 @@ const Events = () => {
       console.error('Error updating event:', error);
     }
   };
+   const handleDeleteEvent = async(event) =>{
+    const response = await ApiServices.deleteEvent(event.programme_id)
+    if(response) {
+      showToast("Deleted Succesfully");
+      closeModal()
+      await fetchEvents();
+    }
 
+   }
   return (
     <div className="bg-black text-white w-full min-h-screen">
       <Navbar />
@@ -264,7 +273,7 @@ const Events = () => {
       </div>
 
       {/* Event Detail Modal */}
-      {isModalOpen && <EventModal event={selectedEvent} onEdit={openEditModal} onClose={closeModal} user={user} navigate={navigate} />}
+      {isModalOpen && <EventModal event={selectedEvent} onEdit={openEditModal} onClose={closeModal} user={user} navigate={navigate} onDelete={handleDeleteEvent} />}
 
       {/* Create Event Modal */}
       {isCreateModalOpen && <CreateEventModal eventData={eventData} setEventData={setEventData} onClose={closeModal} onCreate={handleCreateEvent} />}
@@ -273,7 +282,7 @@ const Events = () => {
   );
 };
 
-export const EventModal = ({ event, onClose, user, navigate, onEdit }) => {
+export const EventModal = ({ event, onClose, user, navigate, onEdit, onDelete }) => {
   const [registeredVolunteers, setRegisteredVolunteers] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -364,6 +373,14 @@ export const EventModal = ({ event, onClose, user, navigate, onEdit }) => {
                     className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                   >
                     Edit Event
+                  </button>
+                )}
+                {(user?.role === 'organization' && event?.organization_name === user?.name || user?.role=== 'admin' )&& (
+                  <button 
+                    onClick={() => onDelete(event)}
+                    className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                  >
+                    <FaTrashAlt/>
                   </button>
                 )}
               </div>
