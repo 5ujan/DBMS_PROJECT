@@ -7,7 +7,7 @@ import Navbar from "../components/Nav";
 import LocationEditorSection from "../components/LocationPicker";
 
 const ProfilePage = () => {
-	const [profileData, setProfileData] = useState({
+	const [profileData1, setProfileData] = useState({
 		name: "",
 		email: "",
 		role: "",
@@ -15,14 +15,14 @@ const ProfilePage = () => {
 		created_at: "",
 		skills: [],
 	});
-	const [isEditing, setIsEditing] = useState(false);
-	const [imagePreview, setImagePreview] = useState(null);
-	const [newSkill, setNewSkill] = useState("");
-	const [availableSkills, setAvailableSkills] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const { user, setUser } = useStore();
-	const [events, setEvents] = useState([]);
-	const [donations, setDonations] = useState([]);
+	const [isEditingbool, setIsEditing] = useState(false);
+	const [imagePreviewVar, setImagePreview] = useState(null);
+	const [newSkillVar, setNewSkill] = useState("");
+	const [availableSkillsVar, setAvailableSkills] = useState([]);
+	const [loadingVar, setLoading] = useState(true);
+	const { user: users, setUser } = useStore();
+	const [event, setEvents] = useState([]);
+	const [donationss, setDonations] = useState([]);
 	useEffect(() => {
 		const fetchUserProfile = async () => {
 			try {
@@ -52,11 +52,11 @@ const ProfilePage = () => {
 		fetchUserProfile();
 	}, []);
 
-	const handleEditToggle = () => {
-		setIsEditing(!isEditing);
+	const handleEditToggled = () => {
+		setIsEditing(!isEditingbool);
 	};
 
-	const handleProfileImageChange = (e) => {
+	const handleProfileImageChanged = (e) => {
 		const file = e.target.files[0];
 		setImagePreview(URL.createObjectURL(file));
 		setProfileData((prevData) => ({
@@ -65,7 +65,7 @@ const ProfilePage = () => {
 		}));
 	};
 
-	const handleInputChange = (e) => {
+	const handleInputChanged = (e) => {
 		const { name, value } = e.target;
 		setProfileData((prevData) => ({
 			...prevData,
@@ -73,11 +73,11 @@ const ProfilePage = () => {
 		}));
 	};
 
-	const handleAddSkill = () => {
-		if (newSkill && !profileData.skills.includes(newSkill)) {
+	const handleAddSkills = () => {
+		if (newSkillVar && !profileData1.skills.includes(newSkillVar)) {
 			setProfileData((prevData) => ({
 				...prevData,
-				skills: [...prevData.skills, newSkill],
+				skills: [...prevData.skills, newSkillVar],
 			}));
 			setNewSkill("");
 		}
@@ -99,19 +99,19 @@ const ProfilePage = () => {
 			// Construct profile data JSON
 
 			// If there's a new profile image, upload it first and get the URL
-			if (profileData.avatar instanceof File) {
+			if (profileData1.avatar instanceof File) {
 				const imageUrl = await ApiServices.uploadPhotoToCloudinary(
-					profileData.avatar
+					profileData1.avatar
 				);
-				profileData.avatar = imageUrl;
+				profileData1.avatar = imageUrl;
 			}
 			//   console.log({ profileData });
 			const updatedProfile = await ApiServices.updateUserData({
-				...user,
-				...profileData,
+				...users,
+				...profileData1,
 			});
 			setProfileData(updatedProfile);
-			console.log(profileData)
+			console.log(profileData1)
 			setIsEditing(false);
 		} catch (error) {
 			console.error("Error saving changes:", error);
@@ -132,7 +132,7 @@ const ProfilePage = () => {
 	return (
 		<div className="bg-black w-full">
 			<Navbar />
-			{!loading && (
+			{!loadingVar && (
 				<div className="text-white min-h-screen w-full flex items-start justify-start px-10">
 					<div className="container p-6 w-full">
 						<h2 className="text-4xl font-bold mb-6 text-left text-dark-green">
@@ -146,16 +146,16 @@ const ProfilePage = () => {
 										<div className="flex flex-col items-center mb-6 md:mb-0">
 											<div className="relative">
 												<div className="w-40 h-40 rounded-full bg-gray-500 overflow-hidden">
-													{imagePreview ? (
+													{imagePreviewVar ? (
 														<img
-															src={imagePreview}
+															src={imagePreviewVar}
 															alt="Profile"
 															className="w-full h-full object-cover"
 														/>
 													) : (
 														<img
 															src={
-																profileData.avatar ||
+																profileData1.avatar ||
 																"/default-profile.png"
 															}
 															alt="Profile"
@@ -163,7 +163,7 @@ const ProfilePage = () => {
 														/>
 													)}
 												</div>
-												{isEditing && (
+												{isEditingbool && (
 													<label
 														htmlFor="image-upload"
 														className="absolute bottom-0 right-0 bg-dark-green text-white p-2 rounded-full cursor-pointer"
@@ -172,13 +172,13 @@ const ProfilePage = () => {
 													</label>
 												)}
 											</div>
-											{isEditing && (
+											{isEditingbool && (
 												<input
 													id="image-upload"
 													type="file"
 													accept="image/*"
 													onChange={
-														handleProfileImageChange
+														handleProfileImageChanged
 													}
 													className="hidden"
 												/>
@@ -187,7 +187,7 @@ const ProfilePage = () => {
 
 										{/* User Info Section */}
 										<div className="md:ml-8 w-full">
-											{Object.entries(profileData).map(
+											{Object.entries(profileData1).map(
 												([key, value]) => {
 													console.log({value})
 													if (
@@ -224,7 +224,7 @@ const ProfilePage = () => {
 															<label className="block text-gray-400 mb-2">
 																{label}
 															</label>
-															{isEditing ? (
+															{isEditingbool ? (
 																<input
 																	type={
 																		key.includes(
@@ -249,7 +249,7 @@ const ProfilePage = () => {
 																			  ""
 																	}
 																	onChange={
-																		handleInputChange
+																		handleInputChanged
 																	}
 																	className="w-full p-3 border border-gray-300 rounded-md bg-gray-600 text-white"
 																/>
@@ -277,7 +277,7 @@ const ProfilePage = () => {
 							</section>
 
 							{/* Skills Section ( @yujal in case of organization idk what to add so improvise)*/}
-							{!user?.established_date ? (
+							{!users?.established_date ? (
 								<section className="bg-gray-800 lg:w-1/3 w-full rounded-xl pr-1 pb-1 text-white">
 									<div className="bg-gray-700 p-8 rounded-xl h-full shadow-xl">
 										<div className="mt-6">
@@ -285,13 +285,13 @@ const ProfilePage = () => {
 												Skills
 											</h3>
 											<ul className="flex gap-3 flex-wrap mt-3">
-												{profileData?.skills?.map(
+												{profileData1?.skills?.map(
 													(skill) => (
 														<li
 															key={skill}
 															className="bg-green-600 px-3 py-1 rounded-full text-white flex items-center"
 														>
-															{isEditing ? (
+															{isEditingbool ? (
 																<>
 																	{skill}
 																	<button
@@ -314,10 +314,10 @@ const ProfilePage = () => {
 											</ul>
 
 											{/* Dropdown for Adding Skills */}
-											{isEditing && (
+											{isEditingbool && (
 												<div className="mt-4">
 													<select
-														value={newSkill}
+														value={newSkillVar}
 														onChange={(e) =>
 															setNewSkill(
 																e.target.value
@@ -328,10 +328,10 @@ const ProfilePage = () => {
 														<option value="">
 															Select a skill
 														</option>
-														{availableSkills
+														{availableSkillsVar
 															.filter(
 																(skill) =>
-																	!profileData.skills.includes(
+																	!profileData1.skills.includes(
 																		skill
 																	)
 															) // Prevent duplicates
@@ -352,15 +352,15 @@ const ProfilePage = () => {
 													</select>
 													<button
 														onClick={() => {
-															if (newSkill) {
-																handleAddSkill(
-																	newSkill
+															if (newSkillVar) {
+																handleAddSkills(
+																	newSkillVar
 																);
 																setNewSkill(""); // Reset after adding
 															}
 														}}
 														className="mt-2 bg-green-500 text-white py-2 px-4 rounded-md"
-														disabled={!newSkill}
+														disabled={!newSkillVar}
 													>
 														Add Skill
 													</button>
@@ -376,9 +376,9 @@ const ProfilePage = () => {
 											<h3 className="text-xl font-semibold text-white">
 												Organized Events
 											</h3>
-											{events && (
+											{event && (
 												<div className="mt-4 flex flex-col gap-3">
-													{events
+													{event
 														.slice(0, 4)
 														.map(eventCard)}
 												</div>
@@ -388,10 +388,10 @@ const ProfilePage = () => {
 											<h3 className="text-xl font-semibold text-white">
 												Donations
 											</h3>
-											{donations &&
-											donations.length > 0 ? (
+											{donationss &&
+											donationss.length > 0 ? (
 												<div className="mt-4 flex flex-col gap-3">
-													{donations
+													{donationss
 														.slice(0, 4)
 														.map(
 															(
@@ -432,8 +432,8 @@ const ProfilePage = () => {
 							)}
 						</section>
 						<LocationEditorSection
-							user={profileData}
-							isEditing={isEditing}
+							user={profileData1}
+							isEditing={isEditingbool}
 							onLocationUpdate={({ location, address }) =>
 								setProfileData((prev) => ({
 									...prev,
@@ -445,7 +445,7 @@ const ProfilePage = () => {
 
 						{/* Edit and Save Buttons */}
 						<div className="flex items-center justify-between mt-6">
-							{isEditing ? (
+							{isEditingbool ? (
 								<div className="flex justify-start gap-2">
 									<button
 										onClick={handleSaveChanges}
@@ -463,7 +463,7 @@ const ProfilePage = () => {
 								</div>
 							) : (
 								<button
-									onClick={handleEditToggle}
+									onClick={handleEditToggled}
 									className="bg-blue-500 text-white py-2 px-6 rounded-md flex items-center hover:bg-blue-600"
 								>
 									<FiEdit className="mr-2" /> Edit Profile
