@@ -2,9 +2,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Calendar, Users, Award, BarChart4, Clock, Heart } from 'lucide-react';
 
-const Landing = () => {
-  const navigate = useNavigate();
-  const realEvents = [
+const LandingPage = () => {
+  const navigateV = useNavigate();
+  const realEventsd = [
     {
       id: 1,
       title: "Blood Donation Camp",
@@ -52,7 +52,7 @@ const Landing = () => {
             <p className="text-gray-300 text-sm mb-4 line-clamp-3 flex-grow">{event.description}</p>
             <button 
               className={`w-full font-medium py-2 px-4 rounded-md transition-colors duration-300 mt-auto ${isCompleted ? 'bg-gray-700 hover:bg-gray-600 text-gray-300' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
-              onClick={() => navigate(`/event/${event.id}`)}
+              onClick={() => navigateV(`/event/${event.id}`)}
             >
               {isCompleted ? 'View Recap' : 'View Details'}
             </button>
@@ -74,13 +74,13 @@ const Landing = () => {
           <div className="flex space-x-4">
             <button 
               className="px-4 py-2 border border-blue-500 text-blue-500 rounded-md hover:bg-blue-500 hover:text-white transition-colors"
-              onClick={() => navigate('/signin')}
+              onClick={() => navigateV('/signin')}
             >
               Log In
             </button>
             <button 
               className="px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
-              onClick={() => navigate('/signin')}
+              onClick={() => navigateV('/signin')}
             >
               Sign Up
             </button>
@@ -101,7 +101,7 @@ const Landing = () => {
             <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
               <button 
                 className="px-8 py-3 bg-blue-600 rounded-md flex items-center justify-center hover:bg-blue-700 transition-colors"
-                onClick={() => navigate('/demo')}
+                onClick={() => navigateV('/demo')}
               >
                 Join Now <ArrowRight className="ml-2" size={20} />
               </button>
@@ -134,7 +134,7 @@ const Landing = () => {
       <div className="max-w-6xl mx-auto mt-12 mb-10 text-center">
       <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Successful Events</h2>
             <div className="flex flex-wrap -mx-3">
-              {realEvents.map((event) => (
+              {realEventsd.map((event) => (
                 <EventCard key={event.id} event={event} />
               ))}
             </div>
@@ -150,7 +150,7 @@ const Landing = () => {
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
             <button 
               className="px-8 py-3 bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
-              onClick={() => navigate('/signup')}
+              onClick={() => navigateV('/signup')}
             >
               Register As an Organization
             </button>
@@ -213,4 +213,4 @@ const Landing = () => {
 };
 
 
-export default Landing;
+export default LandingPage;
